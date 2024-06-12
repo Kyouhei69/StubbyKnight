@@ -36,45 +36,48 @@
     <ClCompile Include="Collision.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ECS\ECS.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Game.hpp">
+    <ClInclude Include="Game.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TextureManager.hpp">
+    <ClInclude Include="TextureManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GameObject.hpp">
+    <ClInclude Include="GameObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Map.hpp">
+    <ClInclude Include="Map.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ECS\ECS.hpp">
+    <ClInclude Include="ECS\ECS.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ECS\Components.hpp">
+    <ClInclude Include="ECS\Components.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ECS\SpriteComponent.hpp">
+    <ClInclude Include="ECS\SpriteComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ECS\TransformComponent.hpp">
+    <ClInclude Include="ECS\TransformComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Vector2D.hpp">
+    <ClInclude Include="Vector2D.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ECS\KeyboardContoller.hpp">
+    <ClInclude Include="ECS\KeyboardContoller.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ECS\ColliderComponent.hpp">
+    <ClInclude Include="ECS\ColliderComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Collision.hpp">
+    <ClInclude Include="Collision.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ECS\TileComponents.hpp">
+    <ClInclude Include="ECS\TileComponents.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

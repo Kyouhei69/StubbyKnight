@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include "SDL.h"
-#include "Components.hpp"
+#include "Components.h"
 
 class ColliderComponent : public Component
 {

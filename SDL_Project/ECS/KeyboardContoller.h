@@ -1,7 +1,7 @@
 #pragma once
-#include "../Game.hpp"
-#include "ECS.hpp"
-#include "Components.hpp"
+#include "../Game.h"
+#include "ECS.h"
+#include "Components.h"
 
 class KeyboardController : public Component
 {
