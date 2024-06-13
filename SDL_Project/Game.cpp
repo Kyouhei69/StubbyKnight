@@ -4,6 +4,7 @@
 #include "ECS/Components.h"
 #include "Vector2D.h"
 #include "Collision.h"
+#include "AssetManager.h"
 
 Map* map;
 Manager manager;
@@ -13,11 +14,14 @@ SDL_Event Game::event;
 
 SDL_Rect Game::camera = { 0,0,800,640 };
 
+AssetManager* Game::assets = new AssetManager(&manager);
+
 //std::vector<ColliderComponent*> Game::colliders;
 
 bool Game::isRunning = false;
 
 auto& player(manager.addEntity());
+auto& enemy(manager.addEntity());
 //auto& wall(manager.addEntity());
 
 //const char* mapfile = "Assets/terrain_ss.png";
@@ -63,19 +67,30 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 		isRunning = true;
 	}
 
-	
+	assets->AddTexture("terrain", "Assets/terrain_ss.png");
+	assets->AddTexture("player", "Assets/EditSheet/player1.png");
+	assets->AddTexture("projectile", "Assets/proj_fire.png");
 
-	map = new Map("Assets/terrain_ss.png", 2, 32);
+	map = new Map("terrain", 2, 32);
 	
 	map->LoadMap("Assets/map.map", 25, 20);
 	
 
-	player.addComponent<TransformComponent>(1);
-	player.addComponent<SpriteComponent>("Assets/EditSheet/player1.png", true);
+	player.addComponent<TransformComponent>(800,640,60,60,1);
+	player.addComponent<SpriteComponent>("player", true);
 	player.addComponent<KeyboardController>();
 	player.addComponent<ColliderComponent>("player");
 	player.addGroup(groupPlayers);
 
+	assets->CreateProjectile(Vector2D(600, 600), Vector2D(2,0), 400, 90, "projectile");
+	assets->CreateProjectile(Vector2D(600, 620), Vector2D(2, 0), 400, 10, "projectile");
+	assets->CreateProjectile(Vector2D(400, 600), Vector2D(2, 1), 400, 3, "projectile");
+	assets->CreateProjectile(Vector2D(600, 600), Vector2D(2, -1), 400, 4, "projectile");
+	
+
+	enemy.addComponent<TransformComponent>(1);
+	enemy.addComponent<SpriteComponent>("player", true);
+	enemy.addGroup(groupEnemies);
 	/*
 	* else {
 		isRunning = false;
@@ -85,9 +100,10 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 }
 
 auto& tiles(manager.getGroup(Game::groupMap));
+auto& enemies(manager.getGroup(Game::groupEnemies));
 auto& players(manager.getGroup(Game::groupPlayers));
 auto& colliders(manager.getGroup(Game::groupColliders));
-
+auto& projectiles(manager.getGroup(Game::groupProjectiles));
 
 void Game::handleEvents()
 {
@@ -120,6 +136,15 @@ void Game::update()
 		if (Collision::AABB(cCol, playerCol))
 		{
 			player.getComponent<TransformComponent>().position = playerPos;
+		}
+	}
+
+	for (auto& p : projectiles)
+	{
+		if (Collision::AABB(player.getComponent<ColliderComponent>().collider, p->getComponent<ColliderComponent>().collider))
+		{
+			std::cout << "Hit player" << std::endl;
+			p->destroy();
 		}
 	}
 
@@ -169,12 +194,21 @@ void Game::render()
 	}
 
 	//Remove this for loop to hide collider boxes
-	//for (auto& c : colliders)
-	//{
-		//c->draw();
-	//}
+	for (auto& c : colliders)
+	{
+		c->draw();
+	}
+	for (auto& e : enemies)
+	{
+		e->draw();
+	}
 
 	for (auto& p : players)
+	{
+		p->draw();
+	}
+
+	for (auto& p : projectiles)
 	{
 		p->draw();
 	}

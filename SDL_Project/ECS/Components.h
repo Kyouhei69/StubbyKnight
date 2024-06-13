@@ -5,4 +5,5 @@
 #include "KeyboardContoller.h"
 #include "ColliderComponent.h"
 #include "TileComponents.h"
+#include "ProjectileComponent.h"
 

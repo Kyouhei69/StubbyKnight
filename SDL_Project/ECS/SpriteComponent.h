@@ -5,7 +5,7 @@
 #include "../TextureManager.h"
 #include "Animation.h"
 #include <map>
-
+#include "../AssetManager.h"
 
 class SpriteComponent : public Component
 {
@@ -27,12 +27,12 @@ public:
 
 
 	SpriteComponent() = default;
-	SpriteComponent(const char* path)
+	SpriteComponent(std::string id)
 	{
-		texture = TextureManager::LoadTexture(path);
+		setTex(id);
 	}
 
-	SpriteComponent(const char* path, bool isAnimated)
+	SpriteComponent(std::string id, bool isAnimated)
 	{
 		animated = isAnimated;
 
@@ -48,15 +48,18 @@ public:
 
 		Play("Idle");
 
-		texture = TextureManager::LoadTexture(path);
+		setTex(id);
 	}
 
 	~SpriteComponent()
 	{
-		SDL_DestroyTexture(texture);
+		//SDL_DestroyTexture(texture);
 	}
 	
-	
+	void setTex(std::string id)
+	{
+		texture = Game::assets->GetTexture(id);
+	}
 	
 
 	void init() override
