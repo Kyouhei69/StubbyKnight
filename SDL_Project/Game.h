@@ -1,6 +1,5 @@
 #pragma once
-#ifndef Game_hpp
-#define Game_hpp
+
 
 #include <SDL.h>
 #include <SDL_image.h>
@@ -28,13 +27,15 @@ public:
 	static SDL_Renderer* renderer;
 	static SDL_Event event;
 	static std::vector<ColliderComponent*> colliders;
+	static bool isRunning;
+
+	static SDL_Rect camera;
 
 private:
 	float count = 0;
-	bool isRunning;
+	
 	SDL_Window* window;
 	
 
 };
 
-#endif //Game_hpp

@@ -40,6 +40,10 @@ public:
 			case SDLK_SPACE:
 				sprite->Play("Shoot");
 				break;
+			case SDLK_ESCAPE:
+				Game::isRunning = false;
+				break;
+
 			default:
 				break;
 			}
