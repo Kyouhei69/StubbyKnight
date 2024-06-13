@@ -16,6 +16,8 @@ std::vector<ColliderComponent*> Game::colliders;
 auto& player(manager.addEntity());
 auto& wall(manager.addEntity());
 
+const char* mapfile = "Assets/terrain_ss.png";
+
 enum groupLabels :std::size_t
 {
 	groupMap,
@@ -23,6 +25,10 @@ enum groupLabels :std::size_t
 	groupEnemies,
 	groupcolliders
 };
+
+auto& tiles(manager.getGroup(groupMap));
+auto& players(manager.getGroup(groupPlayers));
+auto& enemies(manager.getGroup(groupEnemies));
 
 Game::Game()
 {
@@ -64,11 +70,11 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 
 	map = new Map();
 	
-	Map::LoadMap("Assets/map_25x20.map", 25, 20);
+	Map::LoadMap("Assets/map.map", 25, 20);
 	
 
-	player.addComponent<TransformComponent>(0, 0, 64, 32, 2);
-	player.addComponent<SpriteComponent>("Assets/player0.png");
+	player.addComponent<TransformComponent>(1);
+	player.addComponent<SpriteComponent>("Assets/EditSheet/player1.png", true);
 	player.addComponent<KeyboardController>();
 	player.addComponent<ColliderComponent>("player");
 	player.addGroup(groupPlayers);
@@ -102,19 +108,29 @@ void Game::update()
 	manager.refresh();
 	manager.update();
 	
+	Vector2D pVel = player.getComponent<TransformComponent>().velocity;
+	int pSpeed = player.getComponent<TransformComponent>().speed;
+
+	for (auto t : tiles)
+	{
+		t->getComponent<TileComponent>().destRect.x += -(pVel.x * pSpeed);
+		t->getComponent<TileComponent>().destRect.y += -(pVel.y * pSpeed);
+	}
+
+	/*
 	for (auto cc : colliders)
 	{
 		Collision::AABB(player.getComponent<ColliderComponent>(), *cc);
 		
 	}
+	*/
+	
 	
 	
 	
 }
 
-auto& tiles(manager.getGroup(groupMap));
-auto& players(manager.getGroup(groupPlayers));
-auto& enemies(manager.getGroup(groupEnemies));
+
 
 
 void Game::render()
@@ -147,9 +163,9 @@ void Game::clean()
 
 }
 
-void Game::AddTile(int id, int x, int y)
+void Game::AddTile(int srcX, int srcY, int xpos, int ypos)
 {
 	auto& tile(manager.addEntity());
-	tile.addComponent<TileComponent>(x, y, 32, 32, id);
+	tile.addComponent<TileComponent>(srcX,srcY,xpos,ypos, mapfile);
 	tile.addGroup(groupMap);
 }

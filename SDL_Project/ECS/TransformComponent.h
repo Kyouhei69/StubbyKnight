@@ -9,8 +9,8 @@ public:
 	Vector2D position;
 	Vector2D velocity;
 
-	int height = 32;
-	int width = 32;
+	int height = 60;
+	int width = 60;
 	int scale = 2;
 
 	int speed = 3;
@@ -22,7 +22,9 @@ public:
 
 	TransformComponent(int sc)
 	{
-		position.Zero();
+		position.x = 400;
+		position.y = 320;
+
 		scale = sc;
 	}
 	TransformComponent(float x, float y)
@@ -47,8 +49,7 @@ public:
 
 	void update() override
 	{
-		position.x += velocity.x * speed;
-		position.y += velocity.y * speed;
+		
 	}
 
 	
