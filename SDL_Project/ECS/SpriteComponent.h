@@ -20,7 +20,7 @@ private:
 
 public:
 	int animIndex = 0;
-	
+	int flip = 0;
 	std::map<const char*, Animation>animations;
 
 	SDL_RendererFlip spriteFlip = SDL_FLIP_NONE;
@@ -30,6 +30,19 @@ public:
 	SpriteComponent(std::string id)
 	{
 		setTex(id);
+	}
+	SpriteComponent(int flipStatus)
+	{
+		if (flip == 0)
+		{
+			spriteFlip = SDL_FLIP_NONE;
+			std::cout << "No Flip Proj" << std::endl;
+		}
+		if (flip == 1)
+		{
+			spriteFlip = SDL_FLIP_HORIZONTAL;
+			std::cout << "Flip Proj" << std::endl;
+		}
 	}
 
 	SpriteComponent(std::string id, bool isAnimated)

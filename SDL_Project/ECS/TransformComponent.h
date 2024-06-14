@@ -1,6 +1,11 @@
 #pragma once
 #include "Components.h"
 #include "../Vector2D.h"
+#include <string>
+#include <map>
+
+
+
 
 
 struct TransformComponent : public Component
@@ -8,6 +13,8 @@ struct TransformComponent : public Component
 public:
 	Vector2D position;
 	Vector2D velocity;
+	std::string direction;
+	
 
 	int height = 60;
 	int width = 60;
@@ -15,9 +22,12 @@ public:
 
 	int speed = 3;
 
+	
+
 	TransformComponent()
 	{
 		position.Zero();
+		
 	}
 
 	TransformComponent(int sc)
@@ -42,9 +52,13 @@ public:
 		scale = sc;
 	}
 
+	
+
 	void init() override
 	{
 		velocity.Zero();
+		direction = "Right";
+		
 	}
 
 	void update() override
@@ -53,6 +67,7 @@ public:
 		position.y += velocity.y * speed;
 	}
 
+	
 	
 
 	
