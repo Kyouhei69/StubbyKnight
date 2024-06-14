@@ -25,7 +25,8 @@ public:
 
 	void update() override
 	{
-		distance += speed;
+		transform->position.x += velocity.x * speed;
+		transform->position.y += velocity.y * speed;
 
 		if (distance > range)
 		{

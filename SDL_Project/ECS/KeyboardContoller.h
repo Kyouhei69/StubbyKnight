@@ -50,6 +50,7 @@ public:
 			{
 			case SDLK_w:
 				transform->velocity.y = -1;
+				transform->direction = "Up";
 				break;
 			case SDLK_a:
 				transform->velocity.x = -1;
@@ -65,6 +66,7 @@ public:
 				break;
 			case SDLK_s:
 				transform->velocity.y = 1;
+				transform->direction = "Down";
 				break;
 			
 			case SDLK_ESCAPE:

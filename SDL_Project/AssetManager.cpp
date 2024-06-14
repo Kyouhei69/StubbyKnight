@@ -11,6 +11,15 @@ AssetManager::~AssetManager()
 
 }
 
+void AssetManager::CreateEnemy(Vector2D pos, int width, int height, int scale, std::string id)
+{
+	auto& enemy(manager->addEntity());
+	enemy.addComponent<TransformComponent>(pos.x, pos.y, width, height, scale);
+	enemy.addComponent<SpriteComponent>(id, true);
+	enemy.addComponent<ColliderComponent>("enemy");
+	enemy.addGroup(Game::groupEnemies);
+}
+
 void AssetManager::CreateProjectile(Vector2D pos, Vector2D vel, int range, int speed, std::string id, std::string flip)
 {
 	auto& projectile(manager->addEntity());
