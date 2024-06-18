@@ -27,7 +27,7 @@ bool Game::left_down = false;
 
 
 auto& player(manager.addEntity());
-
+auto& pVisual(manager.addEntity());
 
 //auto& wall(manager.addEntity());
 
@@ -77,6 +77,7 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	assets->AddTexture("terrain", "Assets/terrain_ss.png");
 	assets->AddTexture("player", "Assets/EditSheet/player1.png");
 	assets->AddTexture("projectile", "Assets/proj_fire.png");
+	assets->AddTexture("pVisual", "Assets/EditSheet/Heart.png");
 
 	map = new Map("terrain", 2, 32);
 	
@@ -88,6 +89,10 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	player.addComponent<KeyboardController>();
 	player.addComponent<ColliderComponent>("player");
 	player.addGroup(groupPlayers);
+
+	pVisual.addComponent<TransformComponent>(player.getComponent<TransformComponent>().position.x, player.getComponent<TransformComponent>().position.y, 16, 16, 1);
+	pVisual.addComponent<SpriteComponent>("pVisual", true);
+	pVisual.addGroup(groupVisuals);
 
 	for (int i = 0; i < 10; i++)
 	{
@@ -117,6 +122,7 @@ auto& enemies(manager.getGroup(Game::groupEnemies));
 auto& players(manager.getGroup(Game::groupPlayers));
 auto& colliders(manager.getGroup(Game::groupColliders));
 auto& projectiles(manager.getGroup(Game::groupProjectiles));
+auto& visuals(manager.getGroup(Game::groupVisuals));
 
 void Game::handleEvents()
 {
@@ -146,6 +152,9 @@ void Game::update()
 	manager.refresh();
 	manager.update();
 
+	
+
+	//CHECKING PLAYER COLLISION WITH WALL
 	for (auto& c : colliders)
 	{
 		SDL_Rect cCol = c->getComponent<ColliderComponent>().collider;
@@ -155,6 +164,8 @@ void Game::update()
 		}
 		
 	}
+
+	//CHECKING PROJECTILE COLLISION WITH WALLS
 	for (auto& p : projectiles)
 	{
 		for (auto& c : colliders)
@@ -168,10 +179,12 @@ void Game::update()
 		}
 	}
 	
+	//CHECKING ENEMY COLLISION WITH PROJECTILES
 	for (auto& e : enemies)
 	{
 		for (auto& p : projectiles)
 		{
+
 			if (Collision::AABB(e->getComponent<ColliderComponent>().collider, p->getComponent<ColliderComponent>().collider))
 			{
 				std::cout << "Hit enemy" << std::endl;
@@ -179,29 +192,39 @@ void Game::update()
 				e->destroy();
 				p->destroy();
 				
+				assets->CreateEnemy((playerPos-Vector2D(60,60)), 60, 60, 1, "player");
 			}
 		}
 	}
 
+	// CHECKING ENEMY COLLISION WITH WALL
 	for (auto& e : enemies)
 	{
+		Vector2D enemyPos = e->getComponent<TransformComponent>().position;
 		for (auto& c : colliders)
 		{
+
 			SDL_Rect cCol = c->getComponent<ColliderComponent>().collider;
 			if (Collision::AABB(cCol, e->getComponent<ColliderComponent>().collider))
 			{
 				std::cout << "Enemy Hit Wall!" << std::endl;
-				e->destroy();
+				e->getComponent<TransformComponent>().position = enemyPos;
 			}
 		}
 	}
+	//testing enemy movement
 	for (auto& e : enemies)
 	{
 		int ub = 1, lb = -2;
 		
-		e->getComponent<TransformComponent>().position.x += ((rand() % 3) - 1) * 5;
-		e->getComponent<TransformComponent>().position.y += ((rand() % 3) - 1) * 5;
-		std::cout << (rand() % 3)-1 << std::endl;
+		e->getComponent<TransformComponent>().position.x += ((rand() % 3) - 1) * 1;
+		e->getComponent<TransformComponent>().position.y += ((rand() % 3) - 1) * 1;
+		//std::cout << (rand() % 3)-1 << std::endl;
+	}
+
+	for (auto& v : visuals)
+	{
+		v->getComponent<TransformComponent>().position = playerPos;
 	}
 
 	camera.x = (player.getComponent<TransformComponent>().position.x + (player.getComponent<TransformComponent>().width/2)) - 400;
@@ -225,6 +248,12 @@ void Game::update()
 	{
 		if (pDirection == "Up")
 		{
+			/*
+			for (int i = 0; i < 10; i++)
+			{
+				assets->CreateProjectile((playerPos - Vector2D(10, 0)), Vector2D(0, -1), 2000, 1, "projectile", "Left");
+			}
+			*/
 			assets->CreateProjectile((playerPos - Vector2D(10, 0)), Vector2D(0, -1), 2000, 1, "projectile", "Left");
 			isShooting = false;
 		}
@@ -235,7 +264,7 @@ void Game::update()
 		}
 		if (pDirection == "Left")
 		{
-			assets->CreateProjectile((playerPos - Vector2D(10, 0)), Vector2D(-1, 0), 2000, 1, "projectile", "Left");
+			assets->CreateProjectile((playerPos - Vector2D(0, 20)), Vector2D(-1, 0), 2000, 1, "projectile", "Left");
 			isShooting = false;
 		}
 		if(pDirection == "Right")
@@ -298,6 +327,11 @@ void Game::render()
 	for (auto& p : projectiles)
 	{
 		p->draw();
+	}
+
+	for (auto& v : visuals)
+	{
+		v->draw();
 	}
 	
 
