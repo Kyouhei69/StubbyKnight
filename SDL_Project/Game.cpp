@@ -23,11 +23,11 @@ AssetManager* Game::assets = new AssetManager(&manager);
 bool Game::isRunning = false;
 
 bool Game::isShooting = false;
-bool Game::left_down = false;
+//bool Game::left_down = false;
 
 
 auto& player(manager.addEntity());
-auto& pVisual(manager.addEntity());
+
 
 //auto& wall(manager.addEntity());
 
@@ -84,17 +84,24 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	map->LoadMap("Assets/map.map", 25, 20);
 	
 
-	player.addComponent<TransformComponent>(800,640,60,60,1);
+	player.addComponent<TransformComponent>(500,640,60,60,1);
 	player.addComponent<SpriteComponent>("player", true);
 	player.addComponent<KeyboardController>();
 	player.addComponent<ColliderComponent>("player");
 	player.addGroup(groupPlayers);
 
-	pVisual.addComponent<TransformComponent>(player.getComponent<TransformComponent>().position.x, player.getComponent<TransformComponent>().position.y, 16, 16, 1);
-	pVisual.addComponent<SpriteComponent>("pVisual", true);
-	pVisual.addGroup(groupVisuals);
+	Vector2D playerPos = player.getComponent<TransformComponent>().position;
+	Vector2D newPos = playerPos + Vector2D(-32,-10);
 
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < 5; i++)
+	{
+		newPos = playerPos + Vector2D(16, 0);
+		assets->CreateVisual(newPos, 16, 16, 1, "pVisual");
+		std::cout << "Creating Visual" << i << newPos << std::endl;
+	}
+	
+
+	for (int i = 0; i < 5; i++)
 	{
 		int ub = 800, lb = 500;
 		Vector2D enemyPos = Vector2D(((rand() % (ub - lb + 1)) + lb), ((rand() % (ub - lb + 1)) + lb));
@@ -126,7 +133,7 @@ auto& visuals(manager.getGroup(Game::groupVisuals));
 
 void Game::handleEvents()
 {
-	left_down = false;
+	//left_down = false;
 	SDL_PollEvent(&event);
 	switch (event.type)
 	{
@@ -140,6 +147,9 @@ void Game::handleEvents()
 
 	
 }
+
+
+Vector2D checkPlayerPos(500,640);
 
 void Game::update()
 {
@@ -184,7 +194,6 @@ void Game::update()
 	{
 		for (auto& p : projectiles)
 		{
-
 			if (Collision::AABB(e->getComponent<ColliderComponent>().collider, p->getComponent<ColliderComponent>().collider))
 			{
 				std::cout << "Hit enemy" << std::endl;
@@ -192,7 +201,7 @@ void Game::update()
 				e->destroy();
 				p->destroy();
 				
-				assets->CreateEnemy((playerPos-Vector2D(60,60)), 60, 60, 1, "player");
+				//assets->CreateEnemy((playerPos-Vector2D(60,60)), 60, 60, 1, "player");
 			}
 		}
 	}
@@ -207,25 +216,39 @@ void Game::update()
 			SDL_Rect cCol = c->getComponent<ColliderComponent>().collider;
 			if (Collision::AABB(cCol, e->getComponent<ColliderComponent>().collider))
 			{
-				std::cout << "Enemy Hit Wall!" << std::endl;
+				//std::cout << "Enemy Hit Wall!" << std::endl;
 				e->getComponent<TransformComponent>().position = enemyPos;
 			}
 		}
 	}
+
+
 	//testing enemy movement
 	for (auto& e : enemies)
 	{
 		int ub = 1, lb = -2;
 		
-		e->getComponent<TransformComponent>().position.x += ((rand() % 3) - 1) * 1;
-		e->getComponent<TransformComponent>().position.y += ((rand() % 3) - 1) * 1;
+		e->getComponent<TransformComponent>().position.x += ((rand() % 3) - 1) * 3;
+		e->getComponent<TransformComponent>().position.y += ((rand() % 3) - 1) * 3;
 		//std::cout << (rand() % 3)-1 << std::endl;
 	}
 
-	for (auto& v : visuals)
+	
+	//Moving pVisual with Player position
+	if (checkPlayerPos.x != playerPos.x || checkPlayerPos.y != playerPos.y)
 	{
-		v->getComponent<TransformComponent>().position = playerPos;
+		Vector2D diffPos = checkPlayerPos - playerPos;
+		std::cout << "move vis" << diffPos << std::endl;
+		for (auto& v : visuals)
+		{
+			Vector2D vPos = v->getComponent<TransformComponent>().position;
+			v->getComponent<TransformComponent>().position = vPos - diffPos;
+		}
+		checkPlayerPos = playerPos;
 	}
+	
+	
+	
 
 	camera.x = (player.getComponent<TransformComponent>().position.x + (player.getComponent<TransformComponent>().width/2)) - 400;
 	camera.y = (player.getComponent<TransformComponent>().position.y + (player.getComponent<TransformComponent>().height / 2)) - 320;
@@ -293,7 +316,7 @@ void Game::update()
 		
 	}
 	*/
-	left_down = false;
+	//left_down = false;
 }
 
 

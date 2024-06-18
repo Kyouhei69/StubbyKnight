@@ -32,7 +32,7 @@ public:
 	static bool isRunning;
 
 	//player variable
-	static bool left_down;
+	//static bool left_down;
 	static bool isShooting;
 
 	static SDL_Rect camera;

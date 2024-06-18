@@ -11,6 +11,14 @@ AssetManager::~AssetManager()
 
 }
 
+void AssetManager::CreateVisual(Vector2D pos, int width, int height, int scale, std::string id)
+{
+	auto& pVisual(manager->addEntity());
+	pVisual.addComponent<TransformComponent>(pos.x, pos.y, width, height, scale);
+	pVisual.addComponent<SpriteComponent>(id, true);
+	pVisual.addGroup(Game::groupVisuals);
+}
+
 void AssetManager::CreateEnemy(Vector2D pos, int width, int height, int scale, std::string id)
 {
 	auto& enemy(manager->addEntity());

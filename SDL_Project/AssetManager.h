@@ -12,11 +12,8 @@ public:
 	AssetManager(Manager* man);
 	~AssetManager();
 
-	
-
-	
-
 	//game objects
+	void CreateVisual(Vector2D pos, int width, int height, int scale, std::string id);
 	void CreateEnemy(Vector2D pos, int width, int height, int scale, std::string id);
 	void CreateProjectile(Vector2D pos, Vector2D vel, int range, int speed, std::string id, std::string flip);
 
