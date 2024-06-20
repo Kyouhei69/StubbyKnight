@@ -12,7 +12,7 @@ int main(int argc, char* argv[])
 
 	game = new Game();
 
-	game->init("DeeEngine", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 640, false);
+	game->init("DeeEngine", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 640, true);
 
 	while (game->running()) {
 
@@ -23,6 +23,9 @@ int main(int argc, char* argv[])
 		game->render();
 
 		frameTime = SDL_GetTicks() - frameStart;
+		
+		
+		game->GameTime = SDL_GetTicks() / 1000;
 
 		if (frameDelay > frameTime) {
 			SDL_Delay(frameDelay - frameTime);

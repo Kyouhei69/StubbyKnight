@@ -25,6 +25,7 @@ void AssetManager::CreateEnemy(Vector2D pos, int width, int height, int scale, s
 	enemy.addComponent<TransformComponent>(pos.x, pos.y, width, height, scale);
 	enemy.addComponent<SpriteComponent>(id, true);
 	enemy.addComponent<ColliderComponent>("enemy");
+	enemy.addComponent<EntityStatusComponent>(5, 10);
 	enemy.addGroup(Game::groupEnemies);
 }
 

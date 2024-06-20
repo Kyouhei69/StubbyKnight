@@ -5,6 +5,7 @@
 #include "Vector2D.h"
 #include "Collision.h"
 #include "AssetManager.h"
+
 #include <cstdlib> 
 
 
@@ -23,7 +24,7 @@ AssetManager* Game::assets = new AssetManager(&manager);
 bool Game::isRunning = false;
 
 bool Game::isShooting = false;
-//bool Game::left_down = false;
+bool Game::CountGameTime = false;
 
 
 auto& player(manager.addEntity());
@@ -33,7 +34,7 @@ auto& player(manager.addEntity());
 
 //const char* mapfile = "Assets/terrain_ss.png";
 
-
+int GameTime;
 
 
 
@@ -52,7 +53,7 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	int flags = 0;
 	if (fulllscreen)
 	{
-		flags = SDL_WINDOW_FULLSCREEN;
+		flags = SDL_WINDOW_RESIZABLE;
 	}
 	if (SDL_Init(SDL_INIT_EVERYTHING) == 0)
 	{
@@ -88,7 +89,9 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	player.addComponent<SpriteComponent>("player", true);
 	player.addComponent<KeyboardController>();
 	player.addComponent<ColliderComponent>("player");
+	player.addComponent<EntityStatusComponent>(5, 10);
 	player.addGroup(groupPlayers);
+	std::cout << "Player HP:" << player.getComponent<EntityStatusComponent>().HealthPoint << std::endl;
 
 	Vector2D playerPos = player.getComponent<TransformComponent>().position;
 	Vector2D newPos = playerPos + Vector2D(-32,-10);
@@ -101,7 +104,7 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	}
 	
 
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < 10; i++)
 	{
 		int ub = 800, lb = 500;
 		Vector2D enemyPos = Vector2D(((rand() % (ub - lb + 1)) + lb), ((rand() % (ub - lb + 1)) + lb));
@@ -116,11 +119,6 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	
 
 	
-	/*
-	* else {
-		isRunning = false;
-	}
-	*/
 	
 }
 
@@ -150,13 +148,18 @@ void Game::handleEvents()
 
 
 Vector2D checkPlayerPos(500,640);
+int GameTimeCounter = 0;
+//int CurrentGameTime = 0;
+int Game::TotalGameTime = 0;
+int Game::GameTime = 0;
+int Game::InitialTime = 0;
 
 void Game::update()
 {
 	//SDL_Rect enemyCol = enemy.getComponent<ColliderComponent>().collider;
 	SDL_Rect playerCol = player.getComponent<ColliderComponent>().collider;
 	Vector2D playerPos = player.getComponent<TransformComponent>().position;
-
+	int pHp = player.getComponent<EntityStatusComponent>().HealthPoint;
 	
 
 	manager.refresh();
@@ -164,6 +167,49 @@ void Game::update()
 
 	
 
+	camera.x = (player.getComponent<TransformComponent>().position.x + (player.getComponent<TransformComponent>().width / 2)) - 400;
+	camera.y = (player.getComponent<TransformComponent>().position.y + (player.getComponent<TransformComponent>().height / 2)) - 320;
+
+	if (camera.x < 0)
+		camera.x = 0;
+	if (camera.y < 0)
+		camera.y = 0;
+	if (camera.x > camera.w)
+		camera.x = camera.w;
+	if (camera.y > camera.h)
+		camera.y = camera.h;
+	
+	//Check time change in seconds
+	if (Game::CountGameTime == true) 
+	{
+		if (GameTimeCounter != GameTime)
+		{
+			//std::cout << "Initial Game Time:" << GameTime << " seconds" << std::endl;
+			std::cout << "Time change!" << std::endl;
+			//std::cout << "End Game Time:" << GameTime << " seconds" << std::endl;
+			TotalGameTime++;
+			int damage = 1;
+			player.getComponent<EntityStatusComponent>().HealthPoint = pHp - damage;
+			std::cout << "Player HP:" << player.getComponent<EntityStatusComponent>().HealthPoint << std::endl;
+			if (player.getComponent<EntityStatusComponent>().HealthPoint <= 0)
+			{
+				player.getComponent<EntityStatusComponent>().isAlive = false;
+				//player.destroy();
+			}
+			GameTimeCounter = GameTime;
+		}
+	}
+	if (Game::CountGameTime == true && (Game::GameTime - Game::InitialTime) == 5)
+	{
+		
+		std::cout << GameTime << std::endl;
+		std::cout << "Debuff Ends!" << std::endl;
+		std::cout << TotalGameTime << std::endl;
+		std::cout << "Player HP:" << player.getComponent<EntityStatusComponent>().HealthPoint << std::endl;
+		Game::CountGameTime = false;
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////////
 	//CHECKING PLAYER COLLISION WITH WALL
 	for (auto& c : colliders)
 	{
@@ -175,6 +221,7 @@ void Game::update()
 		
 	}
 
+	////////////////////////////////////////////////////////////////////////////////////////
 	//CHECKING PROJECTILE COLLISION WITH WALLS
 	for (auto& p : projectiles)
 	{
@@ -189,16 +236,24 @@ void Game::update()
 		}
 	}
 	
+	////////////////////////////////////////////////////////////////////////////////////////
 	//CHECKING ENEMY COLLISION WITH PROJECTILES
 	for (auto& e : enemies)
 	{
+		if (e->getComponent<EntityStatusComponent>().isAlive != true)
+		{
+			std::cout << "Enemy Destroyed!" << std::endl;
+			e->destroy();
+		}
 		for (auto& p : projectiles)
 		{
 			if (Collision::AABB(e->getComponent<ColliderComponent>().collider, p->getComponent<ColliderComponent>().collider))
 			{
 				std::cout << "Hit enemy" << std::endl;
+				e->getComponent<EntityStatusComponent>().HealthPoint -= 1;
+				std::cout << "Enemy HP: " << e->getComponent<EntityStatusComponent>().HealthPoint << std::endl;
 				
-				e->destroy();
+				//e->destroy();
 				p->destroy();
 				
 				//assets->CreateEnemy((playerPos-Vector2D(60,60)), 60, 60, 1, "player");
@@ -206,6 +261,7 @@ void Game::update()
 		}
 	}
 
+	////////////////////////////////////////////////////////////////////////////////////////
 	// CHECKING ENEMY COLLISION WITH WALL
 	for (auto& e : enemies)
 	{
@@ -222,8 +278,8 @@ void Game::update()
 		}
 	}
 
-
-	//testing enemy movement
+	////////////////////////////////////////////////////////////////////////////////////////
+	//Testing enemy movement
 	for (auto& e : enemies)
 	{
 		int ub = 1, lb = -2;
@@ -234,11 +290,12 @@ void Game::update()
 	}
 
 	
+	////////////////////////////////////////////////////////////////////////////////////////
 	//Moving pVisual with Player position
 	if (checkPlayerPos.x != playerPos.x || checkPlayerPos.y != playerPos.y)
 	{
 		Vector2D diffPos = checkPlayerPos - playerPos;
-		std::cout << "move vis" << diffPos << std::endl;
+		//std::cout << "move vis" << diffPos << std::endl;
 		for (auto& v : visuals)
 		{
 			Vector2D vPos = v->getComponent<TransformComponent>().position;
@@ -247,25 +304,21 @@ void Game::update()
 		checkPlayerPos = playerPos;
 	}
 	
-	
+	//////////////////////////////////////////////////////////////////////////////////////
+	//Check damage and player status
+	for (auto& p : players)
+	{
+
+	}
 	
 
-	camera.x = (player.getComponent<TransformComponent>().position.x + (player.getComponent<TransformComponent>().width/2)) - 400;
-	camera.y = (player.getComponent<TransformComponent>().position.y + (player.getComponent<TransformComponent>().height / 2)) - 320;
-
-	if (camera.x < 0)
-		camera.x = 0;
-	if (camera.y < 0)
-		camera.y = 0;
-	if (camera.x > camera.w)
-		camera.x = camera.w;
-	if (camera.y > camera.h)
-		camera.y = camera.h;
+	
 
 	std::string pDirection = player.getComponent<TransformComponent>().direction;
-	//std::cout << pDirection << std::endl;
-	//std::cout << isShooting << std::endl;
+	
 
+
+	////////////////////////////////////////////////////////////////////////////////////////
 	//Player projectile function
 	if (isShooting == true )
 	{
@@ -297,26 +350,7 @@ void Game::update()
 		}
 	}
 	
-	
-	
-	/*
-	 
-	
-	Vector2D pVel = player.getComponent<TransformComponent>().velocity;
-	int pSpeed = player.getComponent<TransformComponent>().speed;
 
-	for (auto t : tiles)
-	{
-		t->getComponent<TileComponent>().destRect.x += -(pVel.x * pSpeed);
-		t->getComponent<TileComponent>().destRect.y += -(pVel.y * pSpeed);
-	}
-	for (auto cc : colliders)
-	{
-		Collision::AABB(player.getComponent<ColliderComponent>(), *cc);
-		
-	}
-	*/
-	//left_down = false;
 }
 
 

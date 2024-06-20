@@ -6,4 +6,5 @@
 #include "ColliderComponent.h"
 #include "TileComponents.h"
 #include "ProjectileComponent.h"
+#include "EntityStatusComponent.h"
 

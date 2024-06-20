@@ -92,5 +92,8 @@
     <ClInclude Include="ECS\ProjectileComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ECS\EntityStatusComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

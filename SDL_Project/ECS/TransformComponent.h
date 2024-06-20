@@ -2,9 +2,6 @@
 #include "Components.h"
 #include "../Vector2D.h"
 #include <string>
-#include <map>
-
-
 
 
 
@@ -27,7 +24,6 @@ public:
 	TransformComponent()
 	{
 		position.Zero();
-		
 	}
 
 	TransformComponent(int sc)
@@ -37,6 +33,7 @@ public:
 
 		scale = sc;
 	}
+
 	TransformComponent(float x, float y)
 	{
 		position.x = x;

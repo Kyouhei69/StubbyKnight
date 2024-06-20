@@ -36,6 +36,7 @@
     <ClInclude Include="ECS\ColliderComponent.h" />
     <ClInclude Include="ECS\Components.h" />
     <ClInclude Include="ECS\ECS.h" />
+    <ClInclude Include="ECS\EntityStatusComponent.h" />
     <ClInclude Include="ECS\KeyboardContoller.h" />
     <ClInclude Include="ECS\ProjectileComponent.h" />
     <ClInclude Include="ECS\TileComponents.h" />

@@ -12,7 +12,7 @@ public:
 	TransformComponent* transform;
 	SpriteComponent* sprite;
 	
-	bool key_down = false;
+	//bool key_down = false;
 
 	void init() override
 	{
@@ -29,15 +29,17 @@ public:
 			switch (Game::event.key.keysym.sym)
 			{
 			case SDLK_SPACE:
-				//Game::left_down = true;
-				key_down = true;
-
-				if (key_down == true)
-				{
-					Game::isShooting = true;
-					sprite->Play("Shoot");
-				}
-
+				Game::isShooting = true;
+				sprite->Play("Shoot");
+				break;
+			case SDLK_t:
+				Game::InitialTime = Game::GameTime;
+				Game::TotalGameTime = 0;
+				Game::CountGameTime = true;
+				break;
+			case SDLK_y:
+				Game::CountGameTime = false;
+				std::cout << Game::TotalGameTime << std::endl;
 				break;
 			}
 		}

@@ -48,7 +48,10 @@ public:
 		groupVisuals
 	};
 
-	
+	static int GameTime;
+	static bool CountGameTime;
+	static int TotalGameTime;
+	static int InitialTime;
 
 private:
 	float count = 0;
