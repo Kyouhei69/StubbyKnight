@@ -5,7 +5,7 @@
 #include "Vector2D.h"
 #include "Collision.h"
 #include "AssetManager.h"
-
+#include "Camera.h"
 #include <cstdlib> 
 
 
@@ -18,6 +18,8 @@ SDL_Event Game::event;
 SDL_Rect Game::camera = { 0,0,800,640 };
 
 AssetManager* Game::assets = new AssetManager(&manager);
+Camera* Game::cam = new Camera();
+
 
 //std::vector<ColliderComponent*> Game::colliders;
 
@@ -159,12 +161,18 @@ void Game::update()
 	//SDL_Rect enemyCol = enemy.getComponent<ColliderComponent>().collider;
 	SDL_Rect playerCol = player.getComponent<ColliderComponent>().collider;
 	Vector2D playerPos = player.getComponent<TransformComponent>().position;
+
+	int playerW = player.getComponent<TransformComponent>().width;
+	int playerH = player.getComponent<TransformComponent>().height;
 	int pHp = player.getComponent<EntityStatusComponent>().HealthPoint;
 	
 
 	manager.refresh();
 	manager.update();
 
+	// Camera function implementation
+	std::cout << "CamMove" << cam->CameraMovement(playerPos, playerW, playerH) << std::endl;
+	//cam->CameraMovement(playerPos, playerW, playerH);
 	
 
 	camera.x = (player.getComponent<TransformComponent>().position.x + (player.getComponent<TransformComponent>().width / 2)) - 400;

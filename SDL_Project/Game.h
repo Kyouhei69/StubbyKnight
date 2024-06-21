@@ -9,6 +9,7 @@
 
 class AssetManager;
 class ColliderComponent;
+class Camera;
 
 class Game
 {
@@ -37,6 +38,7 @@ public:
 
 	static SDL_Rect camera;
 	static AssetManager* assets;
+	static Camera* cam;
 
 	enum groupLabels :std::size_t
 	{
