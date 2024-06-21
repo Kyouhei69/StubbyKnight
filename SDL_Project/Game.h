@@ -36,7 +36,7 @@ public:
 	//static bool left_down;
 	static bool isShooting;
 
-	static SDL_Rect camera;
+	//static SDL_Rect camera;
 	static AssetManager* assets;
 	static Camera* cam;
 

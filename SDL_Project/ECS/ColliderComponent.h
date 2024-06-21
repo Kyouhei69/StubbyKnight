@@ -55,8 +55,8 @@ public:
 		}
 		
 
-		destR.x = collider.x - Game::camera.x;
-		destR.y = collider.y - Game::camera.y;
+		destR.x = collider.x - Game::cam->camPos.x;
+		destR.y = collider.y - Game::cam->camPos.y;
 
 	}
 

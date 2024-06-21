@@ -6,6 +6,7 @@
 #include "Animation.h"
 #include <map>
 #include "../AssetManager.h"
+#include "../Camera.h"
 
 class SpriteComponent : public Component
 {
@@ -94,8 +95,8 @@ public:
 		}
 		srcRect.y = animIndex * transform->height;
 
-		destRect.x = static_cast<int>(transform->position.x) - Game::camera.x;
-		destRect.y = static_cast<int>(transform->position.y) - Game::camera.y;
+		destRect.x = static_cast<int>(transform->position.x) - Game::cam->camPos.x;
+		destRect.y = static_cast<int>(transform->position.y) - Game::cam->camPos.y;
 		destRect.h = transform->height * transform->scale;
 		destRect.w = transform->width * transform->scale;
 	}

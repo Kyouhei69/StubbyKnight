@@ -38,8 +38,8 @@ public:
 
 	void update() override
 	{
-		destRect.x = position.x - Game::camera.x;
-		destRect.y = position.y - Game::camera.y;
+		destRect.x = position.x - Game::cam->camPos.x;
+		destRect.y = position.y - Game::cam->camPos.y;
 
 	}
 

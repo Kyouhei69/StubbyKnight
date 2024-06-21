@@ -33,10 +33,10 @@ public:
 			std::cout << "Out of range" << std::endl;
 			entity->destroy();
 		}
-		else if (transform->position.x > Game::camera.x + Game::camera.w ||
-			transform->position.x < Game::camera.x ||
-			transform->position.y > Game::camera.y + Game::camera.h ||
-			transform->position.y < Game::camera.y
+		else if (transform->position.x > Game::cam->camPos.x + Game::cam->camDimension.w ||
+			transform->position.x < Game::cam->camPos.x ||
+			transform->position.y > Game::cam->camPos.y + Game::cam->camDimension.h ||
+			transform->position.y < Game::cam->camPos.y
 			)
 		{
 			std::cout << "Out of bounds" << std::endl;

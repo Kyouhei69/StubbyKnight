@@ -15,7 +15,7 @@ Manager manager;
 SDL_Renderer* Game::renderer = nullptr;
 SDL_Event Game::event;
 
-SDL_Rect Game::camera = { 0,0,800,640 };
+//SDL_Rect Game::camera = { 0,0,800,640 };
 
 AssetManager* Game::assets = new AssetManager(&manager);
 Camera* Game::cam = new Camera();
@@ -171,10 +171,10 @@ void Game::update()
 	manager.update();
 
 	// Camera function implementation
-	std::cout << "CamMove" << cam->CameraMovement(playerPos, playerW, playerH) << std::endl;
-	//cam->CameraMovement(playerPos, playerW, playerH);
+	//std::cout << "CamMove" << cam->CameraMovement(playerPos, playerW, playerH) << std::endl;
+	cam->CameraMovement(playerPos, playerW, playerH);
 	
-
+	/*
 	camera.x = (player.getComponent<TransformComponent>().position.x + (player.getComponent<TransformComponent>().width / 2)) - 400;
 	camera.y = (player.getComponent<TransformComponent>().position.y + (player.getComponent<TransformComponent>().height / 2)) - 320;
 
@@ -186,6 +186,8 @@ void Game::update()
 		camera.x = camera.w;
 	if (camera.y > camera.h)
 		camera.y = camera.h;
+	*/
+	
 	
 	//Check time change in seconds
 	if (Game::CountGameTime == true) 
