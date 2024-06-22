@@ -6,6 +6,7 @@
 #include "Collision.h"
 #include "AssetManager.h"
 #include "Camera.h"
+#include "EntityTracker.h"
 #include <cstdlib> 
 
 
@@ -15,13 +16,12 @@ Manager manager;
 SDL_Renderer* Game::renderer = nullptr;
 SDL_Event Game::event;
 
-//SDL_Rect Game::camera = { 0,0,800,640 };
+
 
 AssetManager* Game::assets = new AssetManager(&manager);
 Camera* Game::cam = new Camera();
 
 
-//std::vector<ColliderComponent*> Game::colliders;
 
 bool Game::isRunning = false;
 
@@ -31,10 +31,6 @@ bool Game::CountGameTime = false;
 
 auto& player(manager.addEntity());
 
-
-//auto& wall(manager.addEntity());
-
-//const char* mapfile = "Assets/terrain_ss.png";
 
 int GameTime;
 
@@ -98,6 +94,7 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	Vector2D playerPos = player.getComponent<TransformComponent>().position;
 	Vector2D newPos = playerPos + Vector2D(-32,-10);
 
+	//Testing visuals on top of player. (HP visual)
 	for (int i = 0; i < 5; i++)
 	{
 		newPos = playerPos + Vector2D(16, 0);
@@ -105,8 +102,8 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 		std::cout << "Creating Visual" << i << newPos << std::endl;
 	}
 	
-
-	for (int i = 0; i < 10; i++)
+	//Spawning enemies
+	for (int i = 0; i < 1; i++)
 	{
 		int ub = 800, lb = 500;
 		Vector2D enemyPos = Vector2D(((rand() % (ub - lb + 1)) + lb), ((rand() % (ub - lb + 1)) + lb));
@@ -115,11 +112,6 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	}
 
 	
-	//assets->CreateProjectile(Vector2D(600, 620), Vector2D(2, 0), 200, 1, "projectile");
-	//assets->CreateProjectile(Vector2D(400, 600), Vector2D(2, 1), 200, 1, "projectile");
-	//assets->CreateProjectile(Vector2D(600, 600), Vector2D(2, -1), 200, 1, "projectile");
-	
-
 	
 	
 }
@@ -270,7 +262,37 @@ void Game::update()
 			}
 		}
 	}
+	////////////////////////////////////////////////////////////////////////////////////////
+	//Testing enemy movement
+	/*
+	for (auto& e : enemies)
+	{
+		int ub = 1, lb = -2;
 
+		e->getComponent<TransformComponent>().position.x += ((rand() % 3) - 1) * 3;
+		e->getComponent<TransformComponent>().position.y += ((rand() % 3) - 1) * 3;
+		//std::cout << (rand() % 3)-1 << std::endl;
+	}
+	*/
+	//Enemy tracking player
+	for (auto& e : enemies)
+	{
+		for (auto& p : players)
+		{
+			Vector2D trackerDir = EntityTracker::InitTracker(e->getComponent<TransformComponent>().position, p->getComponent<TransformComponent>().position);
+			float range = EntityTracker::getLength();
+			if (range > 10 && range < 500)
+			{
+				e->getComponent<TransformComponent>().position += trackerDir*1;
+			}
+			else
+			{
+				e->getComponent<TransformComponent>().velocity = Vector2D();
+			}
+			
+			std::cout << trackerDir << range << std::endl;
+		}
+	}
 	////////////////////////////////////////////////////////////////////////////////////////
 	// CHECKING ENEMY COLLISION WITH WALL
 	for (auto& e : enemies)
@@ -278,26 +300,16 @@ void Game::update()
 		Vector2D enemyPos = e->getComponent<TransformComponent>().position;
 		for (auto& c : colliders)
 		{
-
 			SDL_Rect cCol = c->getComponent<ColliderComponent>().collider;
 			if (Collision::AABB(cCol, e->getComponent<ColliderComponent>().collider))
 			{
-				//std::cout << "Enemy Hit Wall!" << std::endl;
+				std::cout << "Enemy Hit Wall!" << std::endl;
 				e->getComponent<TransformComponent>().position = enemyPos;
 			}
 		}
 	}
 
-	////////////////////////////////////////////////////////////////////////////////////////
-	//Testing enemy movement
-	for (auto& e : enemies)
-	{
-		int ub = 1, lb = -2;
-		
-		e->getComponent<TransformComponent>().position.x += ((rand() % 3) - 1) * 3;
-		e->getComponent<TransformComponent>().position.y += ((rand() % 3) - 1) * 3;
-		//std::cout << (rand() % 3)-1 << std::endl;
-	}
+	
 
 	
 	////////////////////////////////////////////////////////////////////////////////////////
@@ -324,12 +336,15 @@ void Game::update()
 
 	
 
-	std::string pDirection = player.getComponent<TransformComponent>().direction;
+	
 	
 
 
 	////////////////////////////////////////////////////////////////////////////////////////
 	//Player projectile function
+
+	std::string pDirection = player.getComponent<TransformComponent>().direction;
+
 	if (isShooting == true )
 	{
 		if (pDirection == "Up")

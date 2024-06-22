@@ -22,7 +22,9 @@ void AssetManager::CreateVisual(Vector2D pos, int width, int height, int scale, 
 void AssetManager::CreateEnemy(Vector2D pos, int width, int height, int scale, std::string id)
 {
 	auto& enemy(manager->addEntity());
+	
 	enemy.addComponent<TransformComponent>(pos.x, pos.y, width, height, scale);
+	enemy.getComponent<TransformComponent>().speed = 3;
 	enemy.addComponent<SpriteComponent>(id, true);
 	enemy.addComponent<ColliderComponent>("enemy");
 	enemy.addComponent<EntityStatusComponent>(5, 10);
