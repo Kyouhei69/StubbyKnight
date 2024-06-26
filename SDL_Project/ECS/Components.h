@@ -7,5 +7,6 @@
 #include "TileComponents.h"
 #include "ProjectileComponent.h"
 #include "EntityStatusComponent.h"
+#include "StatusComponent.h"
 
 

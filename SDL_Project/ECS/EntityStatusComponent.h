@@ -1,20 +1,33 @@
 #pragma once
 #include "Components.h"
+#include "SDL.h"
 
-struct EntityStatusComponent : public Component
+class EntityStatusComponent : public Component
 {
+private:
+	
+	
 public:
-	float HealthPoint;
-	int ManaPoint;
 	bool isAlive = true;
-
+	float HealthPoint = 5;
+	int ManaPoint = 5;
+	EntityStatusComponent()
+	{
+		HealthPoint = 5;
+		ManaPoint = 5;
+	};
 	EntityStatusComponent(float hp, int mp)
 	{
 		HealthPoint = hp;
 		ManaPoint = mp;
 	}
 	
-	void init() override
+	void Heal(int hp)
+	{
+		HealthPoint += hp;
+	}
+
+	void init()override
 	{
 		
 	}
@@ -28,5 +41,8 @@ public:
 		}
 		
 	}
+	~EntityStatusComponent()
+	{
 
+	}
 };

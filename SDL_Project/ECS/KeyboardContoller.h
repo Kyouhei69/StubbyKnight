@@ -9,16 +9,18 @@
 class KeyboardController : public Component
 {
 public:
+	
 	TransformComponent* transform;
 	SpriteComponent* sprite;
+	
 	
 	//bool key_down = false;
 
 	void init() override
 	{
+		
 		transform = &entity->getComponent<TransformComponent>();
 		sprite = &entity->getComponent<SpriteComponent>();
-		
 	}
 
 	void update() override
@@ -40,6 +42,9 @@ public:
 			case SDLK_y:
 				Game::CountGameTime = false;
 				std::cout << Game::TotalGameTime << std::endl;
+				break;
+			case SDLK_h:
+				
 				break;
 			}
 		}

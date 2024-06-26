@@ -107,5 +107,8 @@
     <ClInclude Include="EntityTracker.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ECS\StatusComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
