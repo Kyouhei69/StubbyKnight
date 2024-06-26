@@ -29,8 +29,8 @@ public:
 			switch (Game::event.key.keysym.sym)
 			{
 			case SDLK_SPACE:
-				Game::isShooting = true;
-				sprite->Play("Shoot");
+				Game::isSlashing = true;
+				sprite->Play("Slash");
 				break;
 			case SDLK_t:
 				Game::InitialTime = Game::GameTime;
@@ -53,22 +53,24 @@ public:
 			case SDLK_w:
 				transform->velocity.y = -1;
 				transform->direction = "Up";
+				sprite->Play("Walk");
 				break;
 			case SDLK_a:
 				transform->velocity.x = -1;
 				transform->direction = "Left";
-				sprite->Play("Idle");
+				sprite->Play("Walk");
 				sprite->spriteFlip = SDL_FLIP_HORIZONTAL;
 				break;
 			case SDLK_d:
 				transform->velocity.x = 1;
 				transform->direction = "Right";
-				sprite->Play("Idle");
+				sprite->Play("Walk");
 				sprite->spriteFlip = SDL_FLIP_NONE;
 				break;
 			case SDLK_s:
 				transform->velocity.y = 1;
 				transform->direction = "Down";
+				sprite->Play("Walk");
 				break;
 			
 			case SDLK_ESCAPE:
@@ -86,15 +88,23 @@ public:
 			{
 			case SDLK_w:
 				transform->velocity.y = 0;
+				sprite->Play("Idle");
 				break;
 			case SDLK_a:
 				transform->velocity.x = 0;
+				sprite->Play("Idle");
 				break;
 			case SDLK_d:
 				transform->velocity.x = 0;
+				sprite->Play("Idle");
 				break;
 			case SDLK_s:
 				transform->velocity.y = 0;
+				sprite->Play("Idle");
+				break;
+			case SDLK_SPACE:
+				
+				sprite->Play("Idle");
 				break;
 			default:
 				break;

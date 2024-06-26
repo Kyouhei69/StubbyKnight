@@ -34,7 +34,7 @@ public:
 
 	//player variable
 	//static bool left_down;
-	static bool isShooting;
+	static bool isSlashing;
 
 	//static SDL_Rect camera;
 	static AssetManager* assets;

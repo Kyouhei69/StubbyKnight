@@ -51,14 +51,14 @@ public:
 		animated = isAnimated;
 
 		Animation idle = Animation(0, 6, 100);
-		Animation shoot = Animation(1, 19, 100);
-		Animation hurt = Animation(2, 6, 100);
-		Animation reload = Animation(3, 14, 100);
+		Animation walk = Animation(1, 6, 100);
+		Animation slash = Animation(2, 6, 100);
+		Animation dash = Animation(3, 6, 100);
 
 		animations.emplace("Idle", idle);
-		animations.emplace("Shoot", shoot);
-		animations.emplace("Hurt", hurt);
-		animations.emplace("Reload", reload);
+		animations.emplace("Walk", walk);
+		animations.emplace("Slash", slash);
+		animations.emplace("Dash", dash);
 
 		Play("Idle");
 

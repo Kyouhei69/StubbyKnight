@@ -25,7 +25,7 @@ Camera* Game::cam = new Camera();
 
 bool Game::isRunning = false;
 
-bool Game::isShooting = false;
+bool Game::isSlashing = false;
 bool Game::CountGameTime = false;
 
 
@@ -74,7 +74,8 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	}
 
 	assets->AddTexture("terrain", "Assets/terrain_ss.png");
-	assets->AddTexture("player", "Assets/EditSheet/player1.png");
+	//assets->AddTexture("player", "Assets/EditSheet/player1.png");
+	assets->AddTexture("player", "Assets/EditSheet/StubbySheet.png");
 	assets->AddTexture("projectile", "Assets/proj_fire.png");
 	assets->AddTexture("pVisual", "Assets/EditSheet/Heart.png");
 
@@ -83,7 +84,7 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	map->LoadMap("Assets/map.map", 25, 20);
 	
 
-	player.addComponent<TransformComponent>(500,640,60,60,1);
+	player.addComponent<TransformComponent>(600,640,42,42,2);
 	player.addComponent<SpriteComponent>("player", true);
 	player.addComponent<KeyboardController>();
 	player.addComponent<ColliderComponent>("player");
@@ -281,7 +282,7 @@ void Game::update()
 		{
 			Vector2D trackerDir = EntityTracker::InitTracker(e->getComponent<TransformComponent>().position, p->getComponent<TransformComponent>().position);
 			float range = EntityTracker::getLength();
-			if (range > 10 && range < 500)
+			if (range > 200 && range < 400)
 			{
 				e->getComponent<TransformComponent>().position += trackerDir*1;
 			}
@@ -290,7 +291,7 @@ void Game::update()
 				e->getComponent<TransformComponent>().velocity = Vector2D();
 			}
 			
-			std::cout << trackerDir << range << std::endl;
+			//std::cout << trackerDir << range << std::endl;
 		}
 	}
 	////////////////////////////////////////////////////////////////////////////////////////
@@ -345,7 +346,7 @@ void Game::update()
 
 	std::string pDirection = player.getComponent<TransformComponent>().direction;
 
-	if (isShooting == true )
+	if (isSlashing == true )
 	{
 		if (pDirection == "Up")
 		{
@@ -355,23 +356,23 @@ void Game::update()
 				assets->CreateProjectile((playerPos - Vector2D(10, 0)), Vector2D(0, -1), 2000, 1, "projectile", "Left");
 			}
 			*/
-			assets->CreateProjectile((playerPos - Vector2D(10, 0)), Vector2D(0, -1), 2000, 1, "projectile", "Left");
-			isShooting = false;
+			assets->CreateProjectile((playerPos), Vector2D(0, -1), 2000, 1, "projectile", "Left");
+			isSlashing = false;
 		}
 		if (pDirection == "Down")
 		{
-			assets->CreateProjectile((playerPos - Vector2D(10, 0)), Vector2D(0, 1), 2000, 1, "projectile", "Right");
-			isShooting = false;
+			assets->CreateProjectile((playerPos), Vector2D(0, 1), 2000, 1, "projectile", "Right");
+			isSlashing = false;
 		}
 		if (pDirection == "Left")
 		{
-			assets->CreateProjectile((playerPos - Vector2D(0, 20)), Vector2D(-1, 0), 2000, 1, "projectile", "Left");
-			isShooting = false;
+			assets->CreateProjectile((playerPos + Vector2D(0, player.getComponent<TransformComponent>().height / 4)), Vector2D(-1, 0), 2000, 1, "projectile", "Left");
+			isSlashing = false;
 		}
 		if(pDirection == "Right")
 		{
-			assets->CreateProjectile((playerPos - Vector2D(10, 0)), Vector2D(1, 0), 2000, 1, "projectile", "Right");
-			isShooting = false;
+			assets->CreateProjectile((playerPos + Vector2D(0, player.getComponent<TransformComponent>().height / 4)), Vector2D(1, 0), 2000, 1, "projectile", "Right");
+			isSlashing = false;
 		}
 	}
 	
