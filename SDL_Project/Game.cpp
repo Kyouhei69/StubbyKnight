@@ -76,6 +76,7 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	assets->AddTexture("terrain", "Assets/terrain_ss.png");
 	//assets->AddTexture("player", "Assets/EditSheet/player1.png");
 	assets->AddTexture("player", "Assets/EditSheet/StubbySheet.png");
+	assets->AddTexture("zombie", "Assets/EditSheet/ZombieSheet.png");
 	assets->AddTexture("projectile", "Assets/proj_fire.png");
 	assets->AddTexture("pVisual", "Assets/EditSheet/Heart.png");
 
@@ -104,12 +105,12 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	}
 	
 	//Spawning enemies
-	for (int i = 0; i < 1; i++)
+	for (int i = 0; i < 10; i++)
 	{
 		int ub = 800, lb = 500;
 		Vector2D enemyPos = Vector2D(((rand() % (ub - lb + 1)) + lb), ((rand() % (ub - lb + 1)) + lb));
 		std::cout << enemyPos << std::endl;
-		assets->CreateEnemy(enemyPos, 60, 60, 1, "player");
+		assets->CreateEnemy(enemyPos, 42, 42, 2, "zombie");
 	}
 
 	
@@ -264,32 +265,37 @@ void Game::update()
 		}
 	}
 	////////////////////////////////////////////////////////////////////////////////////////
-	//Testing enemy movement
-	/*
-	for (auto& e : enemies)
-	{
-		int ub = 1, lb = -2;
-
-		e->getComponent<TransformComponent>().position.x += ((rand() % 3) - 1) * 3;
-		e->getComponent<TransformComponent>().position.y += ((rand() % 3) - 1) * 3;
-		//std::cout << (rand() % 3)-1 << std::endl;
-	}
-	*/
 	//Enemy tracking player
+	//Change direction sprite
 	for (auto& e : enemies)
 	{
 		for (auto& p : players)
 		{
 			Vector2D trackerDir = EntityTracker::InitTracker(e->getComponent<TransformComponent>().position, p->getComponent<TransformComponent>().position);
 			float range = EntityTracker::getLength();
-			if (range > 200 && range < 400)
+			if (range < 400)
 			{
 				e->getComponent<TransformComponent>().position += trackerDir*1;
+				e->getComponent<SpriteComponent>().Play("Walk");
+				if (trackerDir.x < 0) {
+					e->getComponent<SpriteComponent>().spriteFlip = SDL_FLIP_HORIZONTAL;
+				}
+				if (trackerDir.x > 0) {
+					e->getComponent<SpriteComponent>().spriteFlip = SDL_FLIP_NONE;
+				}
+				if (range < 150)
+				{
+					e->getComponent<SpriteComponent>().Play("Slash");
+				}
 			}
 			else
 			{
 				e->getComponent<TransformComponent>().velocity = Vector2D();
+				e->getComponent<SpriteComponent>().Play("Idle");
 			}
+
+			
+
 			
 			//std::cout << trackerDir << range << std::endl;
 		}
