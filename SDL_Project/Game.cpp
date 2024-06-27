@@ -27,13 +27,13 @@ bool Game::isRunning = false;
 
 bool Game::isSlashing = false;
 bool Game::CountGameTime = false;
-
+bool Game::playerAlive = true;
 
 auto& player(manager.addEntity());
 
 
 int GameTime;
-
+int TotalScore = 0;
 
 Vector2D initPlayer(600, 740);
 
@@ -76,6 +76,7 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	assets->AddTexture("terrain", "Assets/terrain_ss.png");
 	//assets->AddTexture("player", "Assets/EditSheet/player1.png");
 	assets->AddTexture("player", "Assets/EditSheet/StubbySheet.png");
+	assets->AddTexture("playerDied", "Assets/EditSheet/SubbyDiedFrame.png");
 	assets->AddTexture("zombie", "Assets/EditSheet/ZombieSheet.png");
 	assets->AddTexture("projectile", "Assets/proj_fire.png");
 	assets->AddTexture("pVisual", "Assets/EditSheet/Heart.png");
@@ -89,6 +90,7 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	player.addComponent<SpriteComponent>("player", true);
 	player.addComponent<KeyboardController>();
 	player.addComponent<ColliderComponent>("player");
+	std::cout << "Collider: " << player.getComponent<ColliderComponent>().collider.w << std::endl;
 	player.addComponent<EntityStatusComponent>();
 	player.addComponent<StatusComponent>();
 	player.addGroup(groupPlayers);
@@ -106,7 +108,7 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	}
 	
 	//Spawning enemies
-	for (int i = 0; i < 1; i++)
+	for (int i = 0; i < 10; i++)
 	{
 		int ub = 800, lb = 500;
 		Vector2D enemyPos = Vector2D(((rand() % (ub - lb + 1)) + lb), ((rand() % (ub - lb + 1)) + lb));
@@ -187,6 +189,7 @@ void Game::update()
 	
 	
 	//Check time change in seconds
+	/*
 	if (Game::CountGameTime == true) 
 	{
 		if (GameTimeCounter != GameTime)
@@ -215,6 +218,8 @@ void Game::update()
 		std::cout << "Player HP:" << player.getComponent<EntityStatusComponent>().HealthPoint << std::endl;
 		Game::CountGameTime = false;
 	}
+	*/
+	
 
 	////////////////////////////////////////////////////////////////////////////////////////
 	//CHECKING PLAYER COLLISION WITH WALL
@@ -223,6 +228,7 @@ void Game::update()
 		SDL_Rect cCol = c->getComponent<ColliderComponent>().collider;
 		if (Collision::AABB(cCol, playerCol))
 		{
+			std::cout << "Pcol: " << playerCol.w << " " << playerCol.h << std::endl;
 			player.getComponent<TransformComponent>().position = playerPos;
 		}
 		
@@ -242,7 +248,8 @@ void Game::update()
 			}
 		}
 	}
-	bool playerHit = false;
+
+	
 	////////////////////////////////////////////////////////////////////////////////////////
 	//CHECKING ENEMY COLLISION WITH PROJECTILES
 	for (auto& e : enemies)
@@ -251,14 +258,13 @@ void Game::update()
 		{
 			std::cout << "Enemy Destroyed!" << std::endl;
 			e->destroy();
+			TotalScore += 100;
 		}
 		for (auto& p : projectiles)
 		{
 			if (Collision::AABB(e->getComponent<ColliderComponent>().collider, p->getComponent<ColliderComponent>().collider))
 			{
 				std::cout << "Hit enemy" << std::endl;
-				playerHit = true;
-				player.getComponent<EntityStatusComponent>().HealthPoint -= 1;
 				e->getComponent<EntityStatusComponent>().HealthPoint -= 1;
 				std::cout << "Enemy HP: " << e->getComponent<EntityStatusComponent>().HealthPoint << std::endl;
 				
@@ -266,6 +272,36 @@ void Game::update()
 				p->destroy();
 				
 				//assets->CreateEnemy((playerPos-Vector2D(60,60)), 60, 60, 1, "player");
+			}
+		}
+	}
+
+
+	bool playerHit = false;
+	////////////////////////////////////////////////////////////////////////////////////////
+	// Checking Enemy attack to player
+	for (auto& e : enemies)
+	{
+		int damage = 1;
+		if (Collision::AABB(e->getComponent<ColliderComponent>().collider, player.getComponent<ColliderComponent>().collider))
+		{
+			//std::cout << "Player Hit" << std::endl;
+			if (GameTimeCounter != GameTime)
+			{
+				Vector2D trackerDir = EntityTracker::InitTracker(e->getComponent<TransformComponent>().position, player.getComponent<TransformComponent>().position);
+				float range = EntityTracker::getLength();
+				std::cout << "Player Hit" << std::endl;
+				playerHit = true;
+				std::cout << "Time change!" << std::endl;
+				TotalGameTime++;
+				
+				player.getComponent<EntityStatusComponent>().HealthPoint = pHp - damage;
+				std::cout << "Player HP:" << player.getComponent<EntityStatusComponent>().HealthPoint << std::endl;
+				if (player.getComponent<EntityStatusComponent>().HealthPoint <= 0)
+				{
+					player.getComponent<EntityStatusComponent>().isAlive = false;
+				}
+				GameTimeCounter = GameTime;
 			}
 		}
 	}
@@ -290,7 +326,7 @@ void Game::update()
 		{
 			Vector2D trackerDir = EntityTracker::InitTracker(e->getComponent<TransformComponent>().position, p->getComponent<TransformComponent>().position);
 			float range = EntityTracker::getLength();
-			if (range < 400)
+			if (range > 80 && range < 400)
 			{
 				e->getComponent<TransformComponent>().position += trackerDir*1;
 				e->getComponent<SpriteComponent>().Play("Walk");
@@ -300,15 +336,16 @@ void Game::update()
 				if (trackerDir.x > 0) {
 					e->getComponent<SpriteComponent>().spriteFlip = SDL_FLIP_NONE;
 				}
-				if (range < 150)
-				{
-					e->getComponent<SpriteComponent>().Play("Slash");
-				}
+				
 			}
 			else
 			{
 				e->getComponent<TransformComponent>().velocity = Vector2D();
 				e->getComponent<SpriteComponent>().Play("Idle");
+			}
+			if (range < 90)
+			{
+				e->getComponent<SpriteComponent>().Play("Slash");
 			}
 
 			
@@ -395,10 +432,15 @@ void Game::update()
 	
 	//////////////////////////////////////////////////////////////////////////////////////
 	//Check damage and player status
+	if (player.getComponent<EntityStatusComponent>().isAlive == false)
+	{
+		Game::playerAlive = false;
+		player.getComponent<SpriteComponent>().Play("Died");
+		//player.getComponent<SpriteComponent>()
+	}
 
 
-
-	
+	std::cout << "TotalScore: " << TotalScore << std::endl;
 }
 
 

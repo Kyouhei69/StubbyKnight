@@ -53,12 +53,12 @@ public:
 		Animation idle = Animation(0, 6, 100);
 		Animation walk = Animation(1, 6, 100);
 		Animation slash = Animation(2, 6, 100);
-		Animation dash = Animation(3, 6, 100);
+		Animation died = Animation(3, 6, 100);
 
 		animations.emplace("Idle", idle);
 		animations.emplace("Walk", walk);
 		animations.emplace("Slash", slash);
-		animations.emplace("Dash", dash);
+		animations.emplace("Died", died);
 
 		Play("Idle");
 
@@ -99,6 +99,8 @@ public:
 		destRect.y = static_cast<int>(transform->position.y) - Game::cam->camPos.y;
 		destRect.h = transform->height * transform->scale;
 		destRect.w = transform->width * transform->scale;
+
+		
 	}
 
 	void draw() override

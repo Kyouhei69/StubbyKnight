@@ -1,16 +1,21 @@
 #pragma once
 #include "Components.h"
 #include "SDL.h"
+#include "../Vector2D.h"
 
-class EntityStatusComponent : public Component
+struct EntityStatusComponent : public Component
 {
-private:
+
 	
 	
 public:
+	TransformComponent* transform;
+
 	bool isAlive = true;
 	float HealthPoint = 5;
 	int ManaPoint = 5;
+	
+
 	EntityStatusComponent()
 	{
 		HealthPoint = 5;
@@ -29,7 +34,7 @@ public:
 
 	void init()override
 	{
-		
+		transform = &entity->getComponent<TransformComponent>();
 	}
 
 	void update() override
@@ -37,8 +42,10 @@ public:
 		if (HealthPoint <= 0)
 		{
 			isAlive = false;
-			std::cout << "Dead" << std::endl;
+			std::cout << "Dead 0 HP" << std::endl;
+
 		}
+		
 		
 	}
 	~EntityStatusComponent()

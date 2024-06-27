@@ -35,7 +35,7 @@ public:
 	//player variable
 	//static bool left_down;
 	static bool isSlashing;
-
+	static bool playerAlive;
 	//static SDL_Rect camera;
 	static AssetManager* assets;
 	static Camera* cam;
