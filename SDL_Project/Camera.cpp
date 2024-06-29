@@ -3,7 +3,7 @@
 
 Camera::Camera()
 {
-	camDimension = { 0,0,800,640 };
+	camDimension = { 0,0,800,800 };
 }
 
 Camera::~Camera()
@@ -17,7 +17,7 @@ Vector2D Camera::CameraMovement(Vector2D pPos, int width, int height)
 	p_height = height;
 
 	camPos.x = (pPos.x + (p_width / 2)) - 400;
-	camPos.y = (pPos.y + (p_height / 2)) - 320;
+	camPos.y = (pPos.y + (p_height / 2)) - 400;
 
 	if (camPos.x < 0)
 		camPos.x = 0;

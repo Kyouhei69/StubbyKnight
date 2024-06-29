@@ -73,17 +73,18 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 		isRunning = true;
 	}
 
-	assets->AddTexture("terrain", "Assets/terrain_ss.png");
+	//assets->AddTexture("terrain", "Assets/terrain_ss.png");
+	assets->AddTexture("testMap", "Assets/map/truemap.png");
 	//assets->AddTexture("player", "Assets/EditSheet/player1.png");
-	assets->AddTexture("player", "Assets/EditSheet/StubbySheet.png");
+	assets->AddTexture("player", "Assets/StubbySheet.png");
 	assets->AddTexture("playerDied", "Assets/EditSheet/SubbyDiedFrame.png");
-	assets->AddTexture("zombie", "Assets/EditSheet/ZombieSheet.png");
+	assets->AddTexture("zombie", "Assets/ZombieSheet.png");
 	assets->AddTexture("projectile", "Assets/proj_fire.png");
-	assets->AddTexture("pVisual", "Assets/EditSheet/Heart.png");
+	assets->AddTexture("pVisual", "Assets/Heart.png");
 
-	map = new Map("terrain", 2, 32);
+	map = new Map("testMap", 2, 16);
 	
-	map->LoadMap("Assets/map.map", 25, 20);
+	map->LoadMap("Assets/map/map.map", 50, 50);
 	
 
 	player.addComponent<TransformComponent>(initPlayer.x,initPlayer.y,42,42,2);
@@ -108,12 +109,15 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	}
 	
 	//Spawning enemies
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < 1; i++)
 	{
 		int ub = 800, lb = 500;
 		Vector2D enemyPos = Vector2D(((rand() % (ub - lb + 1)) + lb), ((rand() % (ub - lb + 1)) + lb));
 		std::cout << enemyPos << std::endl;
-		assets->CreateEnemy(enemyPos, 42, 42, 2, "zombie");
+		int usb = 3, lsb = 1;
+		int speed = rand() % (usb - lsb + 1) + lsb;
+		std::cout << speed << std::endl;
+		assets->CreateEnemy(enemyPos, 42, 42, 2, "zombie",speed);
 	}
 
 	
@@ -328,7 +332,7 @@ void Game::update()
 			float range = EntityTracker::getLength();
 			if (range > 80 && range < 400)
 			{
-				e->getComponent<TransformComponent>().position += trackerDir*1;
+				e->getComponent<TransformComponent>().position += trackerDir*(e->getComponent<TransformComponent>().speed);
 				e->getComponent<SpriteComponent>().Play("Walk");
 				if (trackerDir.x < 0) {
 					e->getComponent<SpriteComponent>().spriteFlip = SDL_FLIP_HORIZONTAL;
@@ -404,28 +408,22 @@ void Game::update()
 	{
 		if (pDirection == "Up")
 		{
-			/*
-			for (int i = 0; i < 10; i++)
-			{
-				assets->CreateProjectile((playerPos - Vector2D(10, 0)), Vector2D(0, -1), 2000, 1, "projectile", "Left");
-			}
-			*/
-			assets->CreateProjectile((playerPos), Vector2D(0, -1), 2000, 1, "projectile", "Left");
+			assets->CreateProjectile((playerPos), Vector2D(0, -1), 30, 1, "projectile", "Left");
 			isSlashing = false;
 		}
 		if (pDirection == "Down")
 		{
-			assets->CreateProjectile((playerPos), Vector2D(0, 1), 2000, 1, "projectile", "Right");
+			assets->CreateProjectile((playerPos), Vector2D(0, 1), 30, 1, "projectile", "Right");
 			isSlashing = false;
 		}
 		if (pDirection == "Left")
 		{
-			assets->CreateProjectile((playerPos + Vector2D(0, player.getComponent<TransformComponent>().height / 4)), Vector2D(-1, 0), 2000, 1, "projectile", "Left");
+			assets->CreateProjectile((playerPos + Vector2D(0, player.getComponent<TransformComponent>().height / 4)), Vector2D(-1, 0), 30, 1, "projectile", "Left");
 			isSlashing = false;
 		}
 		if(pDirection == "Right")
 		{
-			assets->CreateProjectile((playerPos + Vector2D(0, player.getComponent<TransformComponent>().height / 4)), Vector2D(1, 0), 2000, 1, "projectile", "Right");
+			assets->CreateProjectile((playerPos + Vector2D(0, player.getComponent<TransformComponent>().height / 4)), Vector2D(1, 0), 30, 1, "projectile", "Right");
 			isSlashing = false;
 		}
 	}
@@ -436,11 +434,12 @@ void Game::update()
 	{
 		Game::playerAlive = false;
 		player.getComponent<SpriteComponent>().Play("Died");
-		//player.getComponent<SpriteComponent>()
+		player.getComponent<TransformComponent>().velocity = Vector2D();
 	}
 
+	
 
-	std::cout << "TotalScore: " << TotalScore << std::endl;
+	//std::cout << "TotalScore: " << TotalScore << std::endl;
 }
 
 

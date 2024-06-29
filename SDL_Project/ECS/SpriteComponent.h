@@ -54,11 +54,13 @@ public:
 		Animation walk = Animation(1, 6, 100);
 		Animation slash = Animation(2, 6, 100);
 		Animation died = Animation(3, 6, 100);
+		Animation diedFrame = Animation(4, 1, 100);
 
 		animations.emplace("Idle", idle);
 		animations.emplace("Walk", walk);
 		animations.emplace("Slash", slash);
 		animations.emplace("Died", died);
+		animations.emplace("DiedFrame",diedFrame);
 
 		Play("Idle");
 

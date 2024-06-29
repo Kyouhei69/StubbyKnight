@@ -19,12 +19,12 @@ void AssetManager::CreateVisual(Vector2D pos, int width, int height, int scale, 
 	pVisual.addGroup(Game::groupVisuals);
 }
 
-void AssetManager::CreateEnemy(Vector2D pos, int width, int height, int scale, std::string id)
+void AssetManager::CreateEnemy(Vector2D pos, int width, int height, int scale, std::string id, int speed)
 {
 	auto& enemy(manager->addEntity());
 	
 	enemy.addComponent<TransformComponent>(pos.x, pos.y, width, height, scale);
-	enemy.getComponent<TransformComponent>().speed = 3;
+	enemy.getComponent<TransformComponent>().speed = speed;
 	enemy.addComponent<SpriteComponent>(id, true);
 	enemy.addComponent<ColliderComponent>("enemy");
 	enemy.addComponent<EntityStatusComponent>(5, 10);

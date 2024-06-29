@@ -27,7 +27,7 @@ public:
 	{
 		transform->position.x += velocity.x * speed;
 		transform->position.y += velocity.y * speed;
-
+		distance += speed;
 		if (distance > range)
 		{
 			std::cout << "Out of range" << std::endl;
