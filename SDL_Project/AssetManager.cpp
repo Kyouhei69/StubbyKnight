@@ -34,16 +34,24 @@ void AssetManager::CreateEnemy(Vector2D pos, int width, int height, int scale, s
 void AssetManager::CreateProjectile(Vector2D pos, Vector2D vel, int range, int speed, std::string id, std::string flip)
 {
 	auto& projectile(manager->addEntity());
-	projectile.addComponent<TransformComponent>(pos.x, pos.y, 32, 32, 1);
+	projectile.addComponent<TransformComponent>(pos.x, pos.y, 16, 16, 2);
 	projectile.addComponent<SpriteComponent>(id, false);
 
 	if (flip == "Left")
 	{
-		projectile.getComponent<SpriteComponent>().spriteFlip = SDL_FLIP_HORIZONTAL;
+		projectile.getComponent<SpriteComponent>().spriteFlip = SDL_FLIP_NONE;
 	}
 	if (flip == "Right")
 	{
+		projectile.getComponent<SpriteComponent>().spriteFlip = SDL_FLIP_HORIZONTAL;
+	}
+	if (flip == "Up")
+	{
 		projectile.getComponent<SpriteComponent>().spriteFlip = SDL_FLIP_NONE;
+	}
+	if (flip == "Down")
+	{
+		projectile.getComponent<SpriteComponent>().spriteFlip = SDL_FLIP_VERTICAL;
 	}
 
 	projectile.addComponent<ProjectileComponent>(range, speed, vel);

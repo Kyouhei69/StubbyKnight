@@ -79,7 +79,9 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	assets->AddTexture("player", "Assets/StubbySheet.png");
 	assets->AddTexture("playerDied", "Assets/EditSheet/SubbyDiedFrame.png");
 	assets->AddTexture("zombie", "Assets/ZombieSheet.png");
-	assets->AddTexture("projectile", "Assets/proj_fire.png");
+	//assets->AddTexture("projectile", "Assets/proj_fire.png");
+	assets->AddTexture("projectile", "Assets/dagger_proj.png");
+	assets->AddTexture("projectile_up", "Assets/dagger_proj_up.png");
 	assets->AddTexture("pVisual", "Assets/Heart.png");
 
 	map = new Map("testMap", 2, 16);
@@ -408,12 +410,12 @@ void Game::update()
 	{
 		if (pDirection == "Up")
 		{
-			assets->CreateProjectile((playerPos), Vector2D(0, -1), 30, 1, "projectile", "Left");
+			assets->CreateProjectile((playerPos), Vector2D(0, -1), 30, 1, "projectile_up", "Up");
 			isSlashing = false;
 		}
 		if (pDirection == "Down")
 		{
-			assets->CreateProjectile((playerPos), Vector2D(0, 1), 30, 1, "projectile", "Right");
+			assets->CreateProjectile((playerPos), Vector2D(0, 1), 30, 1, "projectile_up", "Down");
 			isSlashing = false;
 		}
 		if (pDirection == "Left")
