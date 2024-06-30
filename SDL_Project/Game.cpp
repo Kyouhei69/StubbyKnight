@@ -74,7 +74,7 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	}
 
 	//assets->AddTexture("terrain", "Assets/terrain_ss.png");
-	assets->AddTexture("testMap", "Assets/map/truemap.png");
+	assets->AddTexture("testMap", "Assets/map/watermap.png");
 	//assets->AddTexture("player", "Assets/EditSheet/player1.png");
 	assets->AddTexture("player", "Assets/StubbySheet.png");
 	assets->AddTexture("playerDied", "Assets/EditSheet/SubbyDiedFrame.png");
@@ -109,9 +109,9 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	}
 	
 	//Spawning enemies
-	for (int i = 0; i < 1; i++)
+	for (int i = 0; i < 2; i++)
 	{
-		int ub = 800, lb = 500;
+		int ub = 800, lb = 30;
 		Vector2D enemyPos = Vector2D(((rand() % (ub - lb + 1)) + lb), ((rand() % (ub - lb + 1)) + lb));
 		std::cout << enemyPos << std::endl;
 		int usb = 3, lsb = 1;
