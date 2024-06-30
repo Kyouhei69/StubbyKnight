@@ -109,12 +109,12 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	}
 	
 	//Spawning enemies
-	for (int i = 0; i < 2; i++)
+	for (int i = 0; i < 10; i++)
 	{
 		int ub = 800, lb = 30;
 		Vector2D enemyPos = Vector2D(((rand() % (ub - lb + 1)) + lb), ((rand() % (ub - lb + 1)) + lb));
 		std::cout << enemyPos << std::endl;
-		int usb = 3, lsb = 1;
+		int usb = 2, lsb = 1;
 		int speed = rand() % (usb - lsb + 1) + lsb;
 		std::cout << speed << std::endl;
 		assets->CreateEnemy(enemyPos, 42, 42, 2, "zombie",speed);
@@ -347,7 +347,7 @@ void Game::update()
 				e->getComponent<TransformComponent>().velocity = Vector2D();
 				e->getComponent<SpriteComponent>().Play("Idle");
 			}
-			if (range < 90)
+			if (range < 100)
 			{
 				e->getComponent<SpriteComponent>().Play("Slash");
 			}
