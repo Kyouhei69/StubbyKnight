@@ -42,7 +42,7 @@
     <ClInclude Include="ECS\EntityStatusComponent.h" />
     <ClInclude Include="ECS\KeyboardContoller.h" />
     <ClInclude Include="ECS\ProjectileComponent.h" />
-    <ClInclude Include="ECS\StatusComponent.h" />
+    <ClInclude Include="ECS\SurvivalComponent.h" />
     <ClInclude Include="ECS\TileComponents.h" />
     <ClInclude Include="ECS\TransformComponent.h" />
     <ClInclude Include="ECS\SpriteComponent.h" />

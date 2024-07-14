@@ -10,6 +10,7 @@ struct TransformComponent : public Component
 public:
 	Vector2D position;
 	Vector2D velocity;
+	Vector2D lastDirection = Vector2D();
 	std::string direction;
 	
 
@@ -62,6 +63,12 @@ public:
 	{
 		position.x += velocity.x * speed;
 		position.y += velocity.y * speed;
+
+		if (velocity.x != 0 || velocity.y != 0)
+		{
+			lastDirection = velocity;
+		}
+		
 	}
 
 	
