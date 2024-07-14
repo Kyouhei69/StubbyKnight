@@ -70,8 +70,8 @@ public:
 					Game::CountGameTime = false;
 					std::cout << Game::TotalGameTime << std::endl;
 					break;
-				case SDLK_h:
-
+				case SDLK_r:
+					Game::gameReset = true;
 					break;
 				}
 			}
@@ -83,25 +83,19 @@ public:
 				{
 				case SDLK_w:
 					transform->velocity.y = -1;
-					transform->direction = "Up";
-					//sprite->Play("Walk");
+					
 					break;
 				case SDLK_a:
 					transform->velocity.x = -1;
-					transform->direction = "Left";
-					//sprite->Play("Walk");
-					//sprite->spriteFlip = SDL_FLIP_HORIZONTAL;
+					
 					break;
 				case SDLK_d:
 					transform->velocity.x = 1;
-					transform->direction = "Right";
-					//sprite->Play("Walk");
-					//sprite->spriteFlip = SDL_FLIP_NONE;
+					
 					break;
 				case SDLK_s:
 					transform->velocity.y = 1;
-					transform->direction = "Down";
-					//sprite->Play("Walk");
+					
 					break;
 				default:
 					break;
@@ -151,6 +145,9 @@ public:
 		{
 			switch (Game::event.key.keysym.sym)
 			{
+			case SDLK_r:
+				Game::gameReset = true;
+				break;
 			case SDLK_ESCAPE:
 				Game::isRunning = false;
 				break;

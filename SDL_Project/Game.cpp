@@ -94,7 +94,7 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	player.addComponent<KeyboardController>();
 	player.addComponent<ColliderComponent>("player");
 	std::cout << "Collider: " << player.getComponent<ColliderComponent>().collider.w << std::endl;
-	player.addComponent<EntityStatusComponent>();
+	player.addComponent<EntityStatusComponent>(5,0);
 	
 	player.addGroup(groupPlayers);
 	std::cout << "Player HP:" << player.getComponent<EntityStatusComponent>().HealthPoint << std::endl;
@@ -103,7 +103,7 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	Vector2D newPos = playerPos + Vector2D(80,-16);
 
 	//Testing visuals on top of player. (HP visual)
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < player.getComponent<EntityStatusComponent>().HealthPoint; i++)
 	{
 		newPos = playerPos + Vector2D(-16, 0);
 		assets->CreateVisual(newPos, 16, 16, 1, "pVisual");
@@ -111,9 +111,9 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	}
 	
 	//Spawning enemies
-	for (int i = 0; i < 1; i++)
+	for (int i = 0; i < 100; i++)
 	{
-		int ub = 800, lb = 30;
+		int ub = 1000, lb = 30;
 		Vector2D enemyPos = Vector2D(((rand() % (ub - lb + 1)) + lb), ((rand() % (ub - lb + 1)) + lb));
 		std::cout << enemyPos << std::endl;
 		int usb = 2, lsb = 1;
@@ -126,6 +126,23 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	
 	
 }
+
+//Reset Function (trigger once)
+bool Game::gameReset = false;
+void Game::resetGame()
+{
+	for (int i = 0; i < 3; i++)
+	{
+		int ub = 1000, lb = 10;
+		Vector2D enemyPos = Vector2D(((rand() % (ub - lb + 1)) + lb), ((rand() % (ub - lb + 1)) + lb));
+		std::cout << enemyPos << std::endl;
+		int usb = 2, lsb = 1;
+		int speed = rand() % (usb - lsb + 1) + lsb;
+		std::cout << speed << std::endl;
+		assets->CreateEnemy(enemyPos, 42, 42, 2, "zombie", speed);
+	}
+}
+
 
 auto& tiles(manager.getGroup(Game::groupMap));
 auto& enemies(manager.getGroup(Game::groupEnemies));

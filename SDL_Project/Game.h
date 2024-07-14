@@ -18,6 +18,7 @@ public:
 	~Game();
 
 	void init(const char* title, int xpos, int ypos, int width, int height, bool fullscreen);
+	void resetGame();
 	
 	void handleEvents();
 	void update();
@@ -25,7 +26,7 @@ public:
 	void render();
 	void clean();
 
-	
+	static bool gameReset;
 	
 	static SDL_Renderer* renderer;
 	static SDL_Event event;
