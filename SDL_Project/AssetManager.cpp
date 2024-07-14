@@ -31,12 +31,13 @@ void AssetManager::CreateEnemy(Vector2D pos, int width, int height, int scale, s
 	enemy.addGroup(Game::groupEnemies);
 }
 
-void AssetManager::CreateProjectile(Vector2D pos, Vector2D vel, int range, int speed, std::string id, std::string flip)
+void AssetManager::CreateProjectile(Vector2D pos, Vector2D vel, int range, int speed, std::string id, SDL_RendererFlip flip)
 {
 	auto& projectile(manager->addEntity());
 	projectile.addComponent<TransformComponent>(pos.x, pos.y, 16, 16, 2);
 	projectile.addComponent<SpriteComponent>(id, false);
-
+	projectile.getComponent<SpriteComponent>().spriteFlip = flip;
+	/*
 	if (flip == "Left")
 	{
 		projectile.getComponent<SpriteComponent>().spriteFlip = SDL_FLIP_NONE;
@@ -53,11 +54,11 @@ void AssetManager::CreateProjectile(Vector2D pos, Vector2D vel, int range, int s
 	{
 		projectile.getComponent<SpriteComponent>().spriteFlip = SDL_FLIP_VERTICAL;
 	}
+	*/
+	
 
 	projectile.addComponent<ProjectileComponent>(range, speed, vel);
 	projectile.addComponent<ColliderComponent>("projectile");
-	
-
 	projectile.addGroup(Game::groupProjectiles);
 }
 

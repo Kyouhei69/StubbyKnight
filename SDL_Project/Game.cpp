@@ -165,6 +165,7 @@ void Game::update()
 	
 	SDL_Rect playerCol = player.getComponent<ColliderComponent>().collider;
 	Vector2D playerPos = player.getComponent<TransformComponent>().position;
+	Vector2D playerDim = Vector2D(player.getComponent<TransformComponent>().width, player.getComponent<TransformComponent>().height);
 
 	int playerW = player.getComponent<TransformComponent>().width;
 	int playerH = player.getComponent<TransformComponent>().height;
@@ -395,28 +396,39 @@ void Game::update()
 	if (isSlashing == true )
 	{
 		player.getComponent<SpriteComponent>().Play("Slash");
+		Vector2D projectilePos = playerPos;
+		Vector2D projectileDirection = player.getComponent<TransformComponent>().lastDirection;
+		std::string projectile_id;
+		SDL_RendererFlip projectile_flip = SDL_FLIP_NONE;
+		
+		if (projectileDirection.x >= 1) // Right
+		{
+			projectilePos = playerPos + Vector2D(playerDim.x * 2, playerDim.y /4);
+			projectile_id = "projectile";
+			projectile_flip = SDL_FLIP_HORIZONTAL;
+		}
+		if (projectileDirection.x <= -1) //Left
+		{
+			projectilePos = playerPos + Vector2D(-playerDim.x, playerDim.y / 4);
+			projectile_id = "projectile";
+			projectile_flip = SDL_FLIP_NONE;
+		}
+
+		if (projectileDirection.y <= -1) //Up
+		{
+			projectilePos = playerPos + Vector2D(playerDim.x / 2, -playerDim.y);
+			projectile_id = "projectile_up";
+			projectile_flip = SDL_FLIP_NONE;
+		}
+		if (projectileDirection.y >= 1) //Down
+		{
+			projectilePos = playerPos + Vector2D(playerDim.x / 2, playerDim.y * 2);
+			projectile_id = "projectile_up";
+			projectile_flip = SDL_FLIP_VERTICAL;
+		}
 		std::cout<< player.getComponent<TransformComponent>().lastDirection << std::endl;
-		assets->CreateProjectile((playerPos + Vector2D(player.getComponent<TransformComponent>().width / 2, 0)), Vector2D(0, -1), 30, 1, "projectile_up", "Up");
-		if (pDirection == "Up")
-		{
-			assets->CreateProjectile((playerPos + Vector2D(player.getComponent<TransformComponent>().width/2,0)), Vector2D(0, -1), 30, 1, "projectile_up", "Up");
-			isSlashing = false;
-		}
-		if (pDirection == "Down")
-		{
-			assets->CreateProjectile((playerPos + Vector2D(player.getComponent<TransformComponent>().width / 2, player.getComponent<TransformComponent>().height*2)), Vector2D(0, 1), 30, 1, "projectile_up", "Down");
-			isSlashing = false;
-		}
-		if (pDirection == "Left")
-		{
-			assets->CreateProjectile((playerPos + Vector2D(-(player.getComponent<TransformComponent>().width), player.getComponent<TransformComponent>().height / 4)), Vector2D(-1, 0), 30, 1, "projectile", "Left");
-			isSlashing = false;
-		}
-		if(pDirection == "Right")
-		{
-			assets->CreateProjectile((playerPos + Vector2D(player.getComponent<TransformComponent>().width*2, player.getComponent<TransformComponent>().height / 4)), Vector2D(1, 0), 30, 1, "projectile", "Right");
-			isSlashing = false;
-		}
+		assets->CreateProjectile(projectilePos, projectileDirection, 30, 1, projectile_id, projectile_flip);
+		isSlashing = false;		
 	}
 	
 	//////////////////////////////////////////////////////////////////////////////////////
