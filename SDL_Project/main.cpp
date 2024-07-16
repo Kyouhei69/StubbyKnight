@@ -19,12 +19,14 @@ int main(int argc, char* argv[])
 	while (game->running()) {
 
 		frameStart = SDL_GetTicks();
-
+		/*
 		if (Game::gameReset)
 		{
 			game->resetGame();
 			Game::gameReset = false;
 		}
+		*/
+		
 		game->handleEvents();
 		game->update();
 		game->render();

@@ -18,7 +18,7 @@ public:
 	~Game();
 
 	void init(const char* title, int xpos, int ypos, int width, int height, bool fullscreen);
-	void resetGame();
+	void respawnPlayer();
 	
 	void handleEvents();
 	void update();
@@ -37,6 +37,7 @@ public:
 	//static bool left_down;
 	static bool isSlashing;
 	static bool playerAlive;
+	static bool playerReset;
 	//static SDL_Rect camera;
 	static AssetManager* assets;
 	static Camera* cam;

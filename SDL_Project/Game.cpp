@@ -111,7 +111,7 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	}
 	
 	//Spawning enemies
-	for (int i = 0; i < 100; i++)
+	for (int i = 0; i < 1; i++)
 	{
 		int ub = 1000, lb = 30;
 		Vector2D enemyPos = Vector2D(((rand() % (ub - lb + 1)) + lb), ((rand() % (ub - lb + 1)) + lb));
@@ -129,18 +129,25 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 
 //Reset Function (trigger once)
 bool Game::gameReset = false;
-void Game::resetGame()
+
+void Game::respawnPlayer()
 {
-	for (int i = 0; i < 3; i++)
+	Game::playerAlive = true;
+	Vector2D playerPos = player.getComponent<TransformComponent>().position;
+	Vector2D newVisual = playerPos + Vector2D(80, -16);
+	player.getComponent<EntityStatusComponent>().HealthPoint = 5;
+	for (int i = 0; i < player.getComponent<EntityStatusComponent>().HealthPoint; i++)
 	{
-		int ub = 1000, lb = 10;
-		Vector2D enemyPos = Vector2D(((rand() % (ub - lb + 1)) + lb), ((rand() % (ub - lb + 1)) + lb));
-		std::cout << enemyPos << std::endl;
-		int usb = 2, lsb = 1;
-		int speed = rand() % (usb - lsb + 1) + lsb;
-		std::cout << speed << std::endl;
-		assets->CreateEnemy(enemyPos, 42, 42, 2, "zombie", speed);
+		newVisual = playerPos + Vector2D(-16, 0);
+		assets->CreateVisual(newVisual, 16, 16, 1, "pVisual");
+		std::cout << "Creating Visual" << i << std::endl;
 	}
+	
+	player.getComponent<SpriteComponent>().Play("Idle");
+	
+	std::cout << player.getComponent<TransformComponent>().position << std::endl;
+	player.getComponent<TransformComponent>().position = initPlayer;
+	Game::playerReset = false;
 }
 
 
@@ -176,6 +183,7 @@ int GameTimeCounter = 0;
 int Game::TotalGameTime = 0;
 int Game::GameTime = 0;
 int Game::InitialTime = 0;
+bool Game::playerReset = false;
 
 void Game::update()
 {
@@ -241,6 +249,7 @@ void Game::update()
 			std::cout << "Pcol: " << playerCol.w << " " << playerCol.h << std::endl;
 			player.getComponent<TransformComponent>().position = playerPos;
 		}
+		
 		
 	}
 
@@ -355,7 +364,7 @@ void Game::update()
 			{
 				e->getComponent<SpriteComponent>().Play("Slash");
 			}
-
+			
 			
 
 			
@@ -454,7 +463,15 @@ void Game::update()
 	{
 		Game::playerAlive = false;
 		player.getComponent<SpriteComponent>().Play("Died");
-		player.getComponent<TransformComponent>().velocity = Vector2D();
+		//player.getComponent<TransformComponent>().velocity = Vector2D();
+		
+		if (Game::playerReset == true)
+		{
+			std::cout << "playerReset 'TRUE'" << std::endl;
+			Game::respawnPlayer();
+			player.getComponent<EntityStatusComponent>().isAlive = true;
+			
+		}
 	}
 
 	

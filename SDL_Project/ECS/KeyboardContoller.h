@@ -69,9 +69,8 @@ public:
 				case SDLK_y:
 					Game::CountGameTime = false;
 					std::cout << Game::TotalGameTime << std::endl;
-					break;
-				case SDLK_r:
-					Game::gameReset = true;
+					break;				
+				default:
 					break;
 				}
 			}
@@ -140,14 +139,28 @@ public:
 			}
 		}
 
+		//Key function only when playerAlive = false
+		if (Game::playerAlive == false)
+		{
+			if (Game::event.type == SDL_KEYDOWN && Game::event.key.repeat == 0)
+			{
+				switch (Game::event.key.keysym.sym)
+				{
+				case SDLK_r:
+					//Game::gameReset = true;
+					Game::playerReset = true;
+					break;				
+				default:
+					break;
+				}
+			}
+		}
 		//Key function unrelated to Player status
 		if (Game::event.type == SDL_KEYDOWN)
 		{
 			switch (Game::event.key.keysym.sym)
 			{
-			case SDLK_r:
-				Game::gameReset = true;
-				break;
+			
 			case SDLK_ESCAPE:
 				Game::isRunning = false;
 				break;
