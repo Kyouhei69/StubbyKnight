@@ -37,6 +37,13 @@ int TotalScore = 0;
 
 Vector2D initPlayer(600, 740);
 
+auto& tiles(manager.getGroup(Game::groupMap));
+auto& enemies(manager.getGroup(Game::groupEnemies));
+auto& players(manager.getGroup(Game::groupPlayers));
+auto& colliders(manager.getGroup(Game::groupColliders));
+auto& projectiles(manager.getGroup(Game::groupProjectiles));
+auto& visuals(manager.getGroup(Game::groupVisuals));
+
 Game::Game()
 {
 
@@ -89,6 +96,7 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	//map = new Map("bloodMap", 1, 32);
 	//map->LoadMap("Assets/map/bloodmap.map", 10, 10);
 
+	/*
 	player.addComponent<TransformComponent>(initPlayer.x,initPlayer.y,42,42,2);
 	player.addComponent<SpriteComponent>("player", true);
 	player.addComponent<KeyboardController>();
@@ -101,9 +109,24 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 
 	Vector2D playerPos = player.getComponent<TransformComponent>().position;
 	Vector2D newPos = playerPos + Vector2D(80,-16);
+	*/
+	
+
+	//Spawning player
+	assets->CreatePlayer(initPlayer, 42, 42, 2, "player");
+
+	Vector2D playerPos;
+	Vector2D newPos;
+	int playerHP;
+	for (auto& player : players)
+	{
+		playerPos = player->getComponent<TransformComponent>().position;
+		playerHP = player->getComponent<EntityStatusComponent>().HealthPoint;
+		newPos = playerPos + Vector2D(80, -16);
+	}
 
 	//Testing visuals on top of player. (HP visual)
-	for (int i = 0; i < player.getComponent<EntityStatusComponent>().HealthPoint; i++)
+	for (int i = 0; i < playerHP; i++)
 	{
 		newPos = playerPos + Vector2D(-16, 0);
 		assets->CreateVisual(newPos, 16, 16, 1, "pVisual");
@@ -111,7 +134,7 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	}
 	
 	//Spawning enemies
-	for (int i = 0; i < 100; i++)
+	for (int i = 0; i < 1; i++)
 	{
 		int ub = 1000, lb = 30;
 		Vector2D enemyPos = Vector2D(((rand() % (ub - lb + 1)) + lb), ((rand() % (ub - lb + 1)) + lb));
@@ -131,7 +154,10 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 bool Game::gameReset = false;
 void Game::resetGame()
 {
-	for (int i = 0; i < 3; i++)
+	Game::playerAlive = true;
+	assets->CreatePlayer(initPlayer, 42, 42, 2, "player");
+
+	for (int i = 0; i < 1; i++)
 	{
 		int ub = 1000, lb = 10;
 		Vector2D enemyPos = Vector2D(((rand() % (ub - lb + 1)) + lb), ((rand() % (ub - lb + 1)) + lb));
@@ -144,12 +170,7 @@ void Game::resetGame()
 }
 
 
-auto& tiles(manager.getGroup(Game::groupMap));
-auto& enemies(manager.getGroup(Game::groupEnemies));
-auto& players(manager.getGroup(Game::groupPlayers));
-auto& colliders(manager.getGroup(Game::groupColliders));
-auto& projectiles(manager.getGroup(Game::groupProjectiles));
-auto& visuals(manager.getGroup(Game::groupVisuals));
+
 
 void Game::handleEvents()
 {
@@ -176,24 +197,46 @@ int GameTimeCounter = 0;
 int Game::TotalGameTime = 0;
 int Game::GameTime = 0;
 int Game::InitialTime = 0;
-
+bool playerDead = false;
+int playerW = 0;
+int playerH = 0;
+int pHp = 0;
 void Game::update()
 {
-	
-	SDL_Rect playerCol = player.getComponent<ColliderComponent>().collider;
-	Vector2D playerPos = player.getComponent<TransformComponent>().position;
-	Vector2D playerDim = Vector2D(player.getComponent<TransformComponent>().width, player.getComponent<TransformComponent>().height);
-
-	int playerW = player.getComponent<TransformComponent>().width;
-	int playerH = player.getComponent<TransformComponent>().height;
-	int pHp = player.getComponent<EntityStatusComponent>().HealthPoint;
-	
-
 	manager.refresh();
 	manager.update();
 
+	SDL_Rect playerCol; // = player.getComponent<ColliderComponent>().collider;
+	Vector2D playerPos; // = player.getComponent<TransformComponent>().position;
+	Vector2D playerDim; // = Vector2D(player.getComponent<TransformComponent>().width, player.getComponent<TransformComponent>().height);
+
 	
+
+	
+	for (auto& player : players)
+	{
+		playerCol = player->getComponent<ColliderComponent>().collider;
+		playerPos = player->getComponent<TransformComponent>().position;
+		playerDim = Vector2D(player->getComponent<TransformComponent>().width, player->getComponent<TransformComponent>().height);
+		playerW = player->getComponent<TransformComponent>().width;
+		playerH = player->getComponent<TransformComponent>().height;
+		pHp = player->getComponent<EntityStatusComponent>().HealthPoint;
+	}
+
+	/*
+	if (playerDead == true)
+	{
+		Vector2D playerPos = Vector2D();
+		int playerW = 0;
+		int playerH = 0;
+		int pHp = 0;
+	}
+	*/
+	
+
 	cam->CameraMovement(playerPos, playerW, playerH);
+	
+	
 	
 	
 	
@@ -233,16 +276,22 @@ void Game::update()
 
 	////////////////////////////////////////////////////////////////////////////////////////
 	//CHECKING PLAYER COLLISION WITH WALL
+	
 	for (auto& c : colliders)
 	{
-		SDL_Rect cCol = c->getComponent<ColliderComponent>().collider;
-		if (Collision::AABB(cCol, playerCol))
+		for (auto& p : players)
 		{
-			std::cout << "Pcol: " << playerCol.w << " " << playerCol.h << std::endl;
-			player.getComponent<TransformComponent>().position = playerPos;
+			SDL_Rect cCol = c->getComponent<ColliderComponent>().collider;
+			SDL_Rect pCol = p->getComponent<ColliderComponent>().collider;
+			if (Collision::AABB(pCol, cCol))
+			{
+				std::cout << "Pcol: " << playerCol.w << " " << playerCol.h << std::endl;
+				p.getComponent<TransformComponent>().position = playerPos;
+			}
 		}
-		
 	}
+	
+	
 
 	////////////////////////////////////////////////////////////////////////////////////////
 	//CHECKING PROJECTILE COLLISION WITH WALLS
@@ -290,26 +339,35 @@ void Game::update()
 	// Checking Enemy attack to player
 	for (auto& e : enemies)
 	{
-		int damage = 1;
-		if (Collision::AABB(e->getComponent<ColliderComponent>().collider, player.getComponent<ColliderComponent>().collider))
+		for (auto& player : players)
 		{
-			//std::cout << "Player Hit" << std::endl;
-			if (GameTimeCounter != GameTime)
+			int damage = 1;
+			if (Collision::AABB(e->getComponent<ColliderComponent>().collider, player->getComponent<ColliderComponent>().collider))
 			{
-				Vector2D trackerDir = EntityTracker::InitTracker(e->getComponent<TransformComponent>().position, player.getComponent<TransformComponent>().position);
-				float range = EntityTracker::getLength();
-				std::cout << "Player Hit" << std::endl;
-				playerHit = true;
-				std::cout << "Time change!" << std::endl;
-				TotalGameTime++;
-				
-				player.getComponent<EntityStatusComponent>().HealthPoint = pHp - damage;
-				std::cout << "Player HP:" << player.getComponent<EntityStatusComponent>().HealthPoint << std::endl;
-				if (player.getComponent<EntityStatusComponent>().HealthPoint <= 0)
+				//std::cout << "Player Hit" << std::endl;
+				if (GameTimeCounter != GameTime)
 				{
-					player.getComponent<EntityStatusComponent>().isAlive = false;
+					Vector2D trackerDir = EntityTracker::InitTracker(e->getComponent<TransformComponent>().position, player->getComponent<TransformComponent>().position);
+					float range = EntityTracker::getLength();
+					std::cout << "Player Hit" << std::endl;
+					playerHit = true;
+					std::cout << "Time change!" << std::endl;
+					TotalGameTime++;
+
+					player->getComponent<EntityStatusComponent>().HealthPoint = pHp - damage;
+					std::cout << "Player HP:" << player->getComponent<EntityStatusComponent>().HealthPoint << std::endl;
+					if (player->getComponent<EntityStatusComponent>().HealthPoint <= 0)
+					{
+						player->getComponent<EntityStatusComponent>().isAlive = false;
+						
+						//playerH = 0;
+						//playerW = 0;
+						player->destroy();
+						
+						
+					}
+					GameTimeCounter = GameTime;
 				}
-				GameTimeCounter = GameTime;
 			}
 		}
 	}
@@ -408,54 +466,62 @@ void Game::update()
 	////////////////////////////////////////////////////////////////////////////////////////
 	//Player projectile function
 
-	std::string pDirection = player.getComponent<TransformComponent>().direction;
+	//std::string pDirection = player.getComponent<TransformComponent>().direction;
 
 	if (isSlashing == true )
 	{
-		player.getComponent<SpriteComponent>().Play("Slash");
-		Vector2D projectilePos = playerPos;
-		Vector2D projectileDirection = player.getComponent<TransformComponent>().lastDirection;
-		std::string projectile_id;
-		SDL_RendererFlip projectile_flip = SDL_FLIP_NONE;
-		
-		if (projectileDirection.x >= 1) // Right
+		for (auto& player : players)
 		{
-			projectilePos = playerPos + Vector2D(playerDim.x * 2, playerDim.y /4);
-			projectile_id = "projectile";
-			projectile_flip = SDL_FLIP_HORIZONTAL;
-		}
-		if (projectileDirection.x <= -1) //Left
-		{
-			projectilePos = playerPos + Vector2D(-playerDim.x, playerDim.y / 4);
-			projectile_id = "projectile";
-			projectile_flip = SDL_FLIP_NONE;
-		}
+			player->getComponent<SpriteComponent>().Play("Slash");
+			Vector2D projectilePos = playerPos;
+			Vector2D projectileDirection = player->getComponent<TransformComponent>().lastDirection;
+			std::string projectile_id;
+			SDL_RendererFlip projectile_flip = SDL_FLIP_NONE;
 
-		if (projectileDirection.y <= -1) //Up
-		{
-			projectilePos = playerPos + Vector2D(playerDim.x / 2, -playerDim.y);
-			projectile_id = "projectile_up";
-			projectile_flip = SDL_FLIP_NONE;
-		}
-		if (projectileDirection.y >= 1) //Down
-		{
-			projectilePos = playerPos + Vector2D(playerDim.x / 2, playerDim.y * 2);
-			projectile_id = "projectile_up";
-			projectile_flip = SDL_FLIP_VERTICAL;
-		}
-		std::cout<< player.getComponent<TransformComponent>().lastDirection << std::endl;
-		assets->CreateProjectile(projectilePos, projectileDirection, 30, 1, projectile_id, projectile_flip);
-		isSlashing = false;		
+			if (projectileDirection.x >= 1) // Right
+			{
+				projectilePos = playerPos + Vector2D(playerDim.x * 2, playerDim.y / 4);
+				projectile_id = "projectile";
+				projectile_flip = SDL_FLIP_HORIZONTAL;
+			}
+			if (projectileDirection.x <= -1) //Left
+			{
+				projectilePos = playerPos + Vector2D(-playerDim.x, playerDim.y / 4);
+				projectile_id = "projectile";
+				projectile_flip = SDL_FLIP_NONE;
+			}
+
+			if (projectileDirection.y <= -1) //Up
+			{
+				projectilePos = playerPos + Vector2D(playerDim.x / 2, -playerDim.y);
+				projectile_id = "projectile_up";
+				projectile_flip = SDL_FLIP_NONE;
+			}
+			if (projectileDirection.y >= 1) //Down
+			{
+				projectilePos = playerPos + Vector2D(playerDim.x / 2, playerDim.y * 2);
+				projectile_id = "projectile_up";
+				projectile_flip = SDL_FLIP_VERTICAL;
+			}
+			std::cout << player->getComponent<TransformComponent>().lastDirection << std::endl;
+			assets->CreateProjectile(projectilePos, projectileDirection, 30, 1, projectile_id, projectile_flip);
+			
+		}	
+		isSlashing = false;
 	}
 	
 	//////////////////////////////////////////////////////////////////////////////////////
 	//Check damage and player status
-	if (player.getComponent<EntityStatusComponent>().isAlive == false)
+	for (auto& player : players)
 	{
-		Game::playerAlive = false;
-		player.getComponent<SpriteComponent>().Play("Died");
-		player.getComponent<TransformComponent>().velocity = Vector2D();
+		if (player->getComponent<EntityStatusComponent>().isAlive == false)
+		{
+			Game::playerAlive = false;
+			player->getComponent<SpriteComponent>().Play("Died");
+			//player->getComponent<TransformComponent>().velocity = Vector2D();
+		}
 	}
+	
 
 	
 

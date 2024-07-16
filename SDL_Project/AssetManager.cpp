@@ -11,6 +11,18 @@ AssetManager::~AssetManager()
 
 }
 
+void AssetManager::CreatePlayer(Vector2D pos, int width, int height, int scale, std::string id)
+{
+	auto& player(manager->addEntity());
+	player.addComponent<TransformComponent>(pos.x, pos.y, 42, 42, 2);
+	player.addComponent<SpriteComponent>(id, true);
+	player.addComponent<KeyboardController>();
+	player.addComponent<ColliderComponent>("player");
+	player.addComponent<EntityStatusComponent>(5, 0);
+	player.addGroup(Game::groupPlayers);
+	std::cout << "Spawning Player" << std::endl;
+}
+
 void AssetManager::CreateVisual(Vector2D pos, int width, int height, int scale, std::string id)
 {
 	auto& pVisual(manager->addEntity());

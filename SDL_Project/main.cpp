@@ -15,7 +15,6 @@ int main(int argc, char* argv[])
 	game->init("StubbyKnight", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 800, true);
 
 	
-
 	while (game->running()) {
 
 		frameStart = SDL_GetTicks();
@@ -23,6 +22,7 @@ int main(int argc, char* argv[])
 		if (Game::gameReset)
 		{
 			game->resetGame();
+			
 			Game::gameReset = false;
 		}
 		game->handleEvents();
